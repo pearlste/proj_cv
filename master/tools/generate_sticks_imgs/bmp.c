@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <malloc.h>
 
 #include "bmp.h"
 
@@ -72,8 +73,114 @@ bmp_write( char *filename, uint8_t *pic_buf[3], int wid, int hgt )
         }
         for (idx_dummy = 0; idx_dummy < n_dummy; ++idx_dummy)
         {
-            fwrite(&ARR(pic_buf[i], 0, 0, wid), 1, 1, fp);
+            fwrite(&ARR(pic_buf[0], 0, 0, wid), 1, 1, fp);
         }
     }
     fclose( fp );
+}
+
+
+void
+bmp_read_hdr(char *filename, uint8_t *pic_buf[3], int *wid, int *hgt)
+{
+    BITMAPFILEHEADER file_hdr;
+    BITMAPINFOHEADER info_hdr;
+
+    FILE    *fp;
+
+    fp = fopen(filename, "rb");
+    assert(fp != NULL);
+
+    fread(&file_hdr.bfType, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfSize, sizeof(DWORD), 1, fp);
+    fread(&file_hdr.bfReserved1, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfReserved2, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfOffBits, sizeof(DWORD), 1, fp);
+
+    fread(&info_hdr.biSize, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biWidth, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biHeight, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biPlanes, sizeof(WORD), 1, fp);
+    fread(&info_hdr.biBitCount, sizeof(WORD), 1, fp);
+    fread(&info_hdr.biCompression, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biSizeImage, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biXPelsPerMeter, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biYPelsPerMeter, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biClrUsed, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biClrImportant, sizeof(DWORD), 1, fp);
+
+    fclose(fp);
+    
+    *wid = info_hdr.biWidth;
+    *hgt = info_hdr.biHeight;
+}
+
+void
+bmp_read(char *filename, uint8_t *pic_buf[3], int *_wid, int *_hgt)
+{
+    BITMAPFILEHEADER file_hdr;
+    BITMAPINFOHEADER info_hdr;
+
+    FILE    *fp;
+
+    int     i;
+    int     idx_v;
+    int     idx_h;
+    int     wid;
+    int     hgt;
+    int     file_stride;
+
+    int     idx_dummy;
+    int     n_dummy;
+    int     dummy;
+
+    fp = fopen(filename, "rb");
+    assert(fp != NULL);
+
+    fread(&file_hdr.bfType, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfSize, sizeof(DWORD), 1, fp);
+    fread(&file_hdr.bfReserved1, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfReserved2, sizeof(WORD), 1, fp);
+    fread(&file_hdr.bfOffBits, sizeof(DWORD), 1, fp);
+
+    fread(&info_hdr.biSize, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biWidth, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biHeight, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biPlanes, sizeof(WORD), 1, fp);
+    fread(&info_hdr.biBitCount, sizeof(WORD), 1, fp);
+    fread(&info_hdr.biCompression, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biSizeImage, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biXPelsPerMeter, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biYPelsPerMeter, sizeof(LONG), 1, fp);
+    fread(&info_hdr.biClrUsed, sizeof(DWORD), 1, fp);
+    fread(&info_hdr.biClrImportant, sizeof(DWORD), 1, fp);
+
+    wid = info_hdr.biWidth;     *_wid = wid;
+    hgt = info_hdr.biHeight;    *_hgt = hgt;
+
+    for (i = 0; i < 3; ++i)
+    {
+        pic_buf[i] = malloc( wid * hgt );
+        assert( pic_buf[i] != NULL );
+    }
+
+    file_stride = (wid * 3 + 3) / 4 * 4;     // wid * 3, rounded up to a multiple of 4 bytes
+
+    n_dummy = file_stride - wid * 3;           // number of dummy bytes needed to pad at the end of each row
+
+    for (idx_v = hgt - 1; idx_v >= 0; --idx_v)
+    {
+        for (idx_h = 0; idx_h < wid; ++idx_h)
+        {
+            for (i = 0; i < 3; ++i)
+            {
+                fread(&ARR(pic_buf[i], idx_h, idx_v, wid), 1, 1, fp);    // Write one pixel component
+            }
+        }
+        for (idx_dummy = 0; idx_dummy < n_dummy; ++idx_dummy)
+        {
+            fread(&dummy, 1, 1, fp);
+        }
+    }
+    fclose(fp);
 }

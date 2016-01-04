@@ -8,4 +8,7 @@
 #define IN_RANGE(x, min, max)   ( (x) >= (min) && (x) <= (max) )
 #define CLIP(x, min, max)       ( (x) < (min) ? (min) : (x) > (max) ? (max) : (x) )
 #define RND_RANGE(min, max)     ( (rand() % (1 + (max) - (min))) + (min) ) 
+#define MAX(x, y)               ( (x) >= (y) ? (x) : (y) )
+#define MIN(x, y)               ( (x) <= (y) ? (x) : (y) )
+
 #endif
