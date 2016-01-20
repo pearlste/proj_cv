@@ -14,7 +14,7 @@ layer {
   }
   data_param {
     source: "/home/pearlstl/proj_cv/master/lmdb/grass_weed_db1"
-    batch_size: 256
+    batch_size: 100
     backend: LMDB
   }
 }
@@ -33,7 +33,7 @@ layer {
   }
   data_param {
     source: "/home/pearlstl/proj_cv/master/lmdb/grass_weed_test_db1"
-    batch_size: 256
+    batch_size: 100
     backend: LMDB
   }
 }
@@ -51,12 +51,11 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96
+    num_output: 64
     kernel_size: 11
     stride: 4
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -106,13 +105,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 256
+    num_output: 64
     pad: 2
     kernel_size: 5
     group: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -162,12 +160,11 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 384
+    num_output: 128
     pad: 1
     kernel_size: 3
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -195,13 +192,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 384
+    num_output: 128
     pad: 1
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -229,13 +225,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 256
+    num_output: 64
     pad: 1
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -274,10 +269,9 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 4096
+    num_output: 256
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -314,10 +308,9 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 4096
+    num_output: 256
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
@@ -354,10 +347,9 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 1000
+    num_output: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
