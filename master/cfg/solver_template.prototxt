@@ -1,3 +1,4 @@
+random_seed: SX_RANDOM_SEED
 test_iter: SX_TEST_ITER
 test_interval: SX_TEST_INTERVAL
 base_lr: SX_BASE_LR

@@ -114,12 +114,10 @@ else:
     
     if os.path.exists(exppath):
         print "The path %s already exists, exiting\n" % exppath
+        exit()
 
-##### Uncomment!!!
-#        exit()
-#
-#    os.makedirs(exppath)                # Step (1)
-#    os.makedirs(exppath+"/snaps")       # Step (2)
+    os.makedirs(exppath)                # Step (1)
+    os.makedirs(exppath+"/snaps")       # Step (2)
     os.chdir(exppath)                   # Step (3)
     
 # (4) In the <exppath> directory create a file 'define_orerrides' with lines like:
@@ -142,7 +140,7 @@ else:
 
     # Add the lines that will be used to configure the solver.prototxt file
     fd.write( '#define SX_TRAIN_VAL_FILENAME_WITH_PATH "%s/train_val.prototxt"\n' % exppath )
-    fd.write( '#define SX_SNAPSHOT                     "%s/snapshots/snaps_"\n' % exppath )
+    fd.write( '#define SX_SNAPSHOT                     "%s/snaps/snap_"\n' % exppath )
 
     fd.close()
     
@@ -152,7 +150,7 @@ else:
 
     system_cmd = 'cat %s/cfg/%s define_overrides %s/cfg/%s | cpp -P -o solver.prototxt' % \
     (os.environ['COLOMBE_ROOT'], scd_filename, os.environ['COLOMBE_ROOT'], sct_filename)
-    print "system_cmd = " + system_cmd
+    print "system_cmd = %s\n" % system_cmd
     os.system( system_cmd )
 
 # (6) Run:
@@ -161,14 +159,19 @@ else:
 
     system_cmd = 'cat %s/%s define_overrides %s/%s | cpp -P -o train_val.prototxt' % \
     (cfgpath, ncd_filename, cfgpath, nct_filename)
-    print "system_cmd = " + system_cmd
+    print "system_cmd = %s\n" % system_cmd
     os.system( system_cmd )
 
 # (7) Ensure that the following lines are in the the file <sct_filename>:
 #       net:                SX_TRAIN_VAL_FILENAME_WITH_PATH
 #       snapshot_prefix:    SX_SNAPSHOT
 
-    system_cmd = '$CAFFE_ROOT/build/tools/caffe train --solver=%s/solver.prototxt' % exppath
-    print "system_cmd = " + system_cmd
-#    os.system( system_cmd )
+    system_cmd = '$CAFFE_ROOT/build/tools/caffe train -log_dir %s --solver=%s/solver.prototxt >& stdout_log &' % (exppath, exppath)
+    print "system_cmd = %s\n" % system_cmd
+    
+    fd = open( "cmd", mode = 'w')
+    fd.write( system_cmd )
+    fd.close()
+    
+    os.system( system_cmd )
     

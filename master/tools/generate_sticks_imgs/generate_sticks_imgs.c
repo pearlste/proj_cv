@@ -42,6 +42,9 @@ main( int argc, char **argv )
     
     int     leaf_wid;
     int     leaf_hgt;
+    
+    char    *env_colombe_root;
+    char    leaf_filename[1024];
 
     if (argc != 10)
     {
@@ -77,11 +80,19 @@ main( int argc, char **argv )
         exit(1);
     }
 
+    env_colombe_root = getenv ("COLOMBE_ROOT");
+    if (env_colombe_root == NULL)
+    {
+        fprintf( stderr, "Environment variable COLOMBE_ROOT not defined\n\n" );
+        exit(1);
+    }
+    sprintf( leaf_filename, "%s/tools/generate_sticks_imgs/leaf_233.bmp", env_colombe_root );
+        
     sprintf( cmd_str, "mkdir -p %s", dst_dir );
     fprintf( stderr, "\n%s\n", cmd_str );
     system( cmd_str );
                     
-    bmp_read( "leaf_233.bmp", leaf, &leaf_wid, &leaf_hgt );
+    bmp_read( leaf_filename, leaf, &leaf_wid, &leaf_hgt );
     fprintf( stderr, "\nRead weed leaf\n" );
     
     fprintf( stderr, "\n" );
