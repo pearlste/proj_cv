@@ -119,6 +119,11 @@ else:
     os.makedirs(exppath)                # Step (1)
     os.makedirs(exppath+"/snaps")       # Step (2)
     os.chdir(exppath)                   # Step (3)
+
+    fd = open( "scr_cmd", mode = 'w')
+    for the_str in sys.argv:
+        fd.write( "%s " % the_str )
+    fd.close()
     
 # (4) In the <exppath> directory create a file 'define_orerrides' with lines like:
 #       #define param1              val1
@@ -140,7 +145,7 @@ else:
 
     # Add the lines that will be used to configure the solver.prototxt file
     fd.write( '#define SX_TRAIN_VAL_FILENAME_WITH_PATH "%s/train_val.prototxt"\n' % exppath )
-    fd.write( '#define SX_SNAPSHOT                     "%s/snaps/snap_"\n' % exppath )
+    fd.write( '#define SX_SNAPSHOT_PREFIX              "%s/snaps/snap_"\n' % exppath )
 
     fd.close()
     
@@ -164,7 +169,7 @@ else:
 
 # (7) Ensure that the following lines are in the the file <sct_filename>:
 #       net:                SX_TRAIN_VAL_FILENAME_WITH_PATH
-#       snapshot_prefix:    SX_SNAPSHOT
+#       snapshot_prefix:    SX_SNAPSHOT_PREFIX
 
     system_cmd = '$CAFFE_ROOT/build/tools/caffe train -log_dir %s --solver=%s/solver.prototxt >& stdout_log &' % (exppath, exppath)
     print "system_cmd = %s\n" % system_cmd
