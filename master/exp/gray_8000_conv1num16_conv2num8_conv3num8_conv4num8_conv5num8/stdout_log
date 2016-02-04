@@ -1,0 +1,1737 @@
+I0204 08:47:10.584936 31970 caffe.cpp:177] Use CPU.
+I0204 08:47:10.585369 31970 solver.cpp:48] Initializing solver from parameters: 
+test_iter: 10
+test_interval: 100
+base_lr: 0.001
+display: 10
+max_iter: 1600
+lr_policy: "step"
+gamma: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 100000
+snapshot: 100
+snapshot_prefix: "/home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap_"
+solver_mode: CPU
+random_seed: 0
+net: "/home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/train_val.prototxt"
+I0204 08:47:10.585526 31970 solver.cpp:91] Creating training net from net file: /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/train_val.prototxt
+I0204 08:47:10.586146 31970 net.cpp:322] The NetState phase (0) differed from the phase (1) specified by a rule in layer data
+I0204 08:47:10.586177 31970 net.cpp:322] The NetState phase (0) differed from the phase (1) specified by a rule in layer accuracy
+I0204 08:47:10.586422 31970 net.cpp:49] Initializing net from parameters: 
+name: "CaffeNet"
+state {
+  phase: TRAIN
+}
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    mirror: true
+    crop_size: 227
+    mean_file: "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db/mean_file.binaryproto"
+  }
+  data_param {
+    source: "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 11
+    stride: 4
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "pool1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "norm1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 2
+    kernel_size: 5
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "pool2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "norm2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "conv4"
+  top: "conv5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "conv5"
+  top: "conv5"
+}
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "pool5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 256
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "fc6"
+  top: "fc6"
+}
+layer {
+  name: "drop6"
+  type: "Dropout"
+  bottom: "fc6"
+  top: "fc6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc7"
+  type: "InnerProduct"
+  bottom: "fc6"
+  top: "fc7"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 256
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "fc7"
+  top: "fc7"
+}
+layer {
+  name: "drop7"
+  type: "Dropout"
+  bottom: "fc7"
+  top: "fc7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc8"
+  type: "InnerProduct"
+  bottom: "fc7"
+  top: "fc8"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc8"
+  bottom: "label"
+  top: "loss"
+}
+I0204 08:47:10.586555 31970 layer_factory.hpp:77] Creating layer data
+I0204 08:47:10.586735 31970 net.cpp:106] Creating Layer data
+I0204 08:47:10.592950 31970 net.cpp:411] data -> data
+I0204 08:47:10.593056 31970 net.cpp:411] data -> label
+I0204 08:47:10.593081 31970 data_transformer.cpp:25] Loading mean file from: /home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db/mean_file.binaryproto
+I0204 08:47:10.593214 31983 db_lmdb.cpp:38] Opened lmdb /home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db
+I0204 08:47:10.595990 31970 data_layer.cpp:41] output data size: 100,1,227,227
+I0204 08:47:10.657943 31970 net.cpp:150] Setting up data
+I0204 08:47:10.657996 31970 net.cpp:157] Top shape: 100 1 227 227 (5152900)
+I0204 08:47:10.658004 31970 net.cpp:157] Top shape: 100 (100)
+I0204 08:47:10.658010 31970 net.cpp:165] Memory required for data: 20612000
+I0204 08:47:10.658030 31970 layer_factory.hpp:77] Creating layer conv1
+I0204 08:47:10.658053 31970 net.cpp:106] Creating Layer conv1
+I0204 08:47:10.658061 31970 net.cpp:454] conv1 <- data
+I0204 08:47:10.658078 31970 net.cpp:411] conv1 -> conv1
+I0204 08:47:10.658181 31970 net.cpp:150] Setting up conv1
+I0204 08:47:10.658192 31970 net.cpp:157] Top shape: 100 16 55 55 (4840000)
+I0204 08:47:10.658197 31970 net.cpp:165] Memory required for data: 39972000
+I0204 08:47:10.658212 31970 layer_factory.hpp:77] Creating layer relu1
+I0204 08:47:10.658222 31970 net.cpp:106] Creating Layer relu1
+I0204 08:47:10.658228 31970 net.cpp:454] relu1 <- conv1
+I0204 08:47:10.658236 31970 net.cpp:397] relu1 -> conv1 (in-place)
+I0204 08:47:10.658249 31970 net.cpp:150] Setting up relu1
+I0204 08:47:10.658257 31970 net.cpp:157] Top shape: 100 16 55 55 (4840000)
+I0204 08:47:10.658262 31970 net.cpp:165] Memory required for data: 59332000
+I0204 08:47:10.658267 31970 layer_factory.hpp:77] Creating layer pool1
+I0204 08:47:10.658277 31970 net.cpp:106] Creating Layer pool1
+I0204 08:47:10.658282 31970 net.cpp:454] pool1 <- conv1
+I0204 08:47:10.658288 31970 net.cpp:411] pool1 -> pool1
+I0204 08:47:10.658308 31970 net.cpp:150] Setting up pool1
+I0204 08:47:10.658318 31970 net.cpp:157] Top shape: 100 16 27 27 (1166400)
+I0204 08:47:10.658323 31970 net.cpp:165] Memory required for data: 63997600
+I0204 08:47:10.658327 31970 layer_factory.hpp:77] Creating layer norm1
+I0204 08:47:10.658346 31970 net.cpp:106] Creating Layer norm1
+I0204 08:47:10.658360 31970 net.cpp:454] norm1 <- pool1
+I0204 08:47:10.658382 31970 net.cpp:411] norm1 -> norm1
+I0204 08:47:10.658398 31970 net.cpp:150] Setting up norm1
+I0204 08:47:10.658406 31970 net.cpp:157] Top shape: 100 16 27 27 (1166400)
+I0204 08:47:10.658411 31970 net.cpp:165] Memory required for data: 68663200
+I0204 08:47:10.658416 31970 layer_factory.hpp:77] Creating layer conv2
+I0204 08:47:10.658426 31970 net.cpp:106] Creating Layer conv2
+I0204 08:47:10.658431 31970 net.cpp:454] conv2 <- norm1
+I0204 08:47:10.658439 31970 net.cpp:411] conv2 -> conv2
+I0204 08:47:10.658474 31970 net.cpp:150] Setting up conv2
+I0204 08:47:10.658481 31970 net.cpp:157] Top shape: 100 8 27 27 (583200)
+I0204 08:47:10.658486 31970 net.cpp:165] Memory required for data: 70996000
+I0204 08:47:10.658495 31970 layer_factory.hpp:77] Creating layer relu2
+I0204 08:47:10.658504 31970 net.cpp:106] Creating Layer relu2
+I0204 08:47:10.658509 31970 net.cpp:454] relu2 <- conv2
+I0204 08:47:10.658516 31970 net.cpp:397] relu2 -> conv2 (in-place)
+I0204 08:47:10.658524 31970 net.cpp:150] Setting up relu2
+I0204 08:47:10.658531 31970 net.cpp:157] Top shape: 100 8 27 27 (583200)
+I0204 08:47:10.658536 31970 net.cpp:165] Memory required for data: 73328800
+I0204 08:47:10.658541 31970 layer_factory.hpp:77] Creating layer pool2
+I0204 08:47:10.658550 31970 net.cpp:106] Creating Layer pool2
+I0204 08:47:10.658555 31970 net.cpp:454] pool2 <- conv2
+I0204 08:47:10.658561 31970 net.cpp:411] pool2 -> pool2
+I0204 08:47:10.658571 31970 net.cpp:150] Setting up pool2
+I0204 08:47:10.658577 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658581 31970 net.cpp:165] Memory required for data: 73869600
+I0204 08:47:10.658586 31970 layer_factory.hpp:77] Creating layer norm2
+I0204 08:47:10.658596 31970 net.cpp:106] Creating Layer norm2
+I0204 08:47:10.658602 31970 net.cpp:454] norm2 <- pool2
+I0204 08:47:10.658609 31970 net.cpp:411] norm2 -> norm2
+I0204 08:47:10.658617 31970 net.cpp:150] Setting up norm2
+I0204 08:47:10.658623 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658627 31970 net.cpp:165] Memory required for data: 74410400
+I0204 08:47:10.658632 31970 layer_factory.hpp:77] Creating layer conv3
+I0204 08:47:10.658641 31970 net.cpp:106] Creating Layer conv3
+I0204 08:47:10.658646 31970 net.cpp:454] conv3 <- norm2
+I0204 08:47:10.658655 31970 net.cpp:411] conv3 -> conv3
+I0204 08:47:10.658680 31970 net.cpp:150] Setting up conv3
+I0204 08:47:10.658687 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658692 31970 net.cpp:165] Memory required for data: 74951200
+I0204 08:47:10.658704 31970 layer_factory.hpp:77] Creating layer relu3
+I0204 08:47:10.658711 31970 net.cpp:106] Creating Layer relu3
+I0204 08:47:10.658716 31970 net.cpp:454] relu3 <- conv3
+I0204 08:47:10.658723 31970 net.cpp:397] relu3 -> conv3 (in-place)
+I0204 08:47:10.658733 31970 net.cpp:150] Setting up relu3
+I0204 08:47:10.658740 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658746 31970 net.cpp:165] Memory required for data: 75492000
+I0204 08:47:10.658751 31970 layer_factory.hpp:77] Creating layer conv4
+I0204 08:47:10.658759 31970 net.cpp:106] Creating Layer conv4
+I0204 08:47:10.658766 31970 net.cpp:454] conv4 <- conv3
+I0204 08:47:10.658773 31970 net.cpp:411] conv4 -> conv4
+I0204 08:47:10.658794 31970 net.cpp:150] Setting up conv4
+I0204 08:47:10.658803 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658807 31970 net.cpp:165] Memory required for data: 76032800
+I0204 08:47:10.658815 31970 layer_factory.hpp:77] Creating layer relu4
+I0204 08:47:10.658823 31970 net.cpp:106] Creating Layer relu4
+I0204 08:47:10.658828 31970 net.cpp:454] relu4 <- conv4
+I0204 08:47:10.658834 31970 net.cpp:397] relu4 -> conv4 (in-place)
+I0204 08:47:10.658843 31970 net.cpp:150] Setting up relu4
+I0204 08:47:10.658849 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658854 31970 net.cpp:165] Memory required for data: 76573600
+I0204 08:47:10.658859 31970 layer_factory.hpp:77] Creating layer conv5
+I0204 08:47:10.658874 31970 net.cpp:106] Creating Layer conv5
+I0204 08:47:10.658885 31970 net.cpp:454] conv5 <- conv4
+I0204 08:47:10.658893 31970 net.cpp:411] conv5 -> conv5
+I0204 08:47:10.658912 31970 net.cpp:150] Setting up conv5
+I0204 08:47:10.658920 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658923 31970 net.cpp:165] Memory required for data: 77114400
+I0204 08:47:10.658936 31970 layer_factory.hpp:77] Creating layer relu5
+I0204 08:47:10.658951 31970 net.cpp:106] Creating Layer relu5
+I0204 08:47:10.658957 31970 net.cpp:454] relu5 <- conv5
+I0204 08:47:10.658964 31970 net.cpp:397] relu5 -> conv5 (in-place)
+I0204 08:47:10.658972 31970 net.cpp:150] Setting up relu5
+I0204 08:47:10.658978 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.658983 31970 net.cpp:165] Memory required for data: 77655200
+I0204 08:47:10.658988 31970 layer_factory.hpp:77] Creating layer pool5
+I0204 08:47:10.658996 31970 net.cpp:106] Creating Layer pool5
+I0204 08:47:10.659003 31970 net.cpp:454] pool5 <- conv5
+I0204 08:47:10.659010 31970 net.cpp:411] pool5 -> pool5
+I0204 08:47:10.659020 31970 net.cpp:150] Setting up pool5
+I0204 08:47:10.659026 31970 net.cpp:157] Top shape: 100 8 6 6 (28800)
+I0204 08:47:10.659031 31970 net.cpp:165] Memory required for data: 77770400
+I0204 08:47:10.659035 31970 layer_factory.hpp:77] Creating layer fc6
+I0204 08:47:10.659049 31970 net.cpp:106] Creating Layer fc6
+I0204 08:47:10.659055 31970 net.cpp:454] fc6 <- pool5
+I0204 08:47:10.659063 31970 net.cpp:411] fc6 -> fc6
+I0204 08:47:10.674768 31970 net.cpp:150] Setting up fc6
+I0204 08:47:10.674799 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.674805 31970 net.cpp:165] Memory required for data: 77872800
+I0204 08:47:10.674818 31970 layer_factory.hpp:77] Creating layer relu6
+I0204 08:47:10.674829 31970 net.cpp:106] Creating Layer relu6
+I0204 08:47:10.674835 31970 net.cpp:454] relu6 <- fc6
+I0204 08:47:10.674845 31970 net.cpp:397] relu6 -> fc6 (in-place)
+I0204 08:47:10.674857 31970 net.cpp:150] Setting up relu6
+I0204 08:47:10.674865 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.674870 31970 net.cpp:165] Memory required for data: 77975200
+I0204 08:47:10.674875 31970 layer_factory.hpp:77] Creating layer drop6
+I0204 08:47:10.674885 31970 net.cpp:106] Creating Layer drop6
+I0204 08:47:10.674890 31970 net.cpp:454] drop6 <- fc6
+I0204 08:47:10.674897 31970 net.cpp:397] drop6 -> fc6 (in-place)
+I0204 08:47:10.674916 31970 net.cpp:150] Setting up drop6
+I0204 08:47:10.674923 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.674928 31970 net.cpp:165] Memory required for data: 78077600
+I0204 08:47:10.674933 31970 layer_factory.hpp:77] Creating layer fc7
+I0204 08:47:10.674953 31970 net.cpp:106] Creating Layer fc7
+I0204 08:47:10.674959 31970 net.cpp:454] fc7 <- fc6
+I0204 08:47:10.674968 31970 net.cpp:411] fc7 -> fc7
+I0204 08:47:10.675575 31970 net.cpp:150] Setting up fc7
+I0204 08:47:10.675585 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.675592 31970 net.cpp:165] Memory required for data: 78180000
+I0204 08:47:10.675601 31970 layer_factory.hpp:77] Creating layer relu7
+I0204 08:47:10.675609 31970 net.cpp:106] Creating Layer relu7
+I0204 08:47:10.675616 31970 net.cpp:454] relu7 <- fc7
+I0204 08:47:10.675622 31970 net.cpp:397] relu7 -> fc7 (in-place)
+I0204 08:47:10.675631 31970 net.cpp:150] Setting up relu7
+I0204 08:47:10.675637 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.675642 31970 net.cpp:165] Memory required for data: 78282400
+I0204 08:47:10.675653 31970 layer_factory.hpp:77] Creating layer drop7
+I0204 08:47:10.675664 31970 net.cpp:106] Creating Layer drop7
+I0204 08:47:10.675670 31970 net.cpp:454] drop7 <- fc7
+I0204 08:47:10.675676 31970 net.cpp:397] drop7 -> fc7 (in-place)
+I0204 08:47:10.675688 31970 net.cpp:150] Setting up drop7
+I0204 08:47:10.675693 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.675699 31970 net.cpp:165] Memory required for data: 78384800
+I0204 08:47:10.675704 31970 layer_factory.hpp:77] Creating layer fc8
+I0204 08:47:10.675714 31970 net.cpp:106] Creating Layer fc8
+I0204 08:47:10.675725 31970 net.cpp:454] fc8 <- fc7
+I0204 08:47:10.675742 31970 net.cpp:411] fc8 -> fc8
+I0204 08:47:10.675871 31970 net.cpp:150] Setting up fc8
+I0204 08:47:10.675880 31970 net.cpp:157] Top shape: 100 2 (200)
+I0204 08:47:10.675885 31970 net.cpp:165] Memory required for data: 78385600
+I0204 08:47:10.675894 31970 layer_factory.hpp:77] Creating layer loss
+I0204 08:47:10.675901 31970 net.cpp:106] Creating Layer loss
+I0204 08:47:10.675907 31970 net.cpp:454] loss <- fc8
+I0204 08:47:10.675914 31970 net.cpp:454] loss <- label
+I0204 08:47:10.675923 31970 net.cpp:411] loss -> loss
+I0204 08:47:10.675938 31970 layer_factory.hpp:77] Creating layer loss
+I0204 08:47:10.675967 31970 net.cpp:150] Setting up loss
+I0204 08:47:10.675976 31970 net.cpp:157] Top shape: (1)
+I0204 08:47:10.675981 31970 net.cpp:160]     with loss weight 1
+I0204 08:47:10.676012 31970 net.cpp:165] Memory required for data: 78385604
+I0204 08:47:10.676020 31970 net.cpp:226] loss needs backward computation.
+I0204 08:47:10.676026 31970 net.cpp:226] fc8 needs backward computation.
+I0204 08:47:10.676033 31970 net.cpp:226] drop7 needs backward computation.
+I0204 08:47:10.676038 31970 net.cpp:226] relu7 needs backward computation.
+I0204 08:47:10.676043 31970 net.cpp:226] fc7 needs backward computation.
+I0204 08:47:10.676048 31970 net.cpp:226] drop6 needs backward computation.
+I0204 08:47:10.676054 31970 net.cpp:226] relu6 needs backward computation.
+I0204 08:47:10.676059 31970 net.cpp:226] fc6 needs backward computation.
+I0204 08:47:10.676064 31970 net.cpp:226] pool5 needs backward computation.
+I0204 08:47:10.676070 31970 net.cpp:226] relu5 needs backward computation.
+I0204 08:47:10.676076 31970 net.cpp:226] conv5 needs backward computation.
+I0204 08:47:10.676084 31970 net.cpp:226] relu4 needs backward computation.
+I0204 08:47:10.676089 31970 net.cpp:226] conv4 needs backward computation.
+I0204 08:47:10.676095 31970 net.cpp:226] relu3 needs backward computation.
+I0204 08:47:10.676100 31970 net.cpp:226] conv3 needs backward computation.
+I0204 08:47:10.676110 31970 net.cpp:226] norm2 needs backward computation.
+I0204 08:47:10.676115 31970 net.cpp:226] pool2 needs backward computation.
+I0204 08:47:10.676122 31970 net.cpp:226] relu2 needs backward computation.
+I0204 08:47:10.676128 31970 net.cpp:226] conv2 needs backward computation.
+I0204 08:47:10.676134 31970 net.cpp:226] norm1 needs backward computation.
+I0204 08:47:10.676141 31970 net.cpp:226] pool1 needs backward computation.
+I0204 08:47:10.676151 31970 net.cpp:226] relu1 needs backward computation.
+I0204 08:47:10.676156 31970 net.cpp:226] conv1 needs backward computation.
+I0204 08:47:10.676163 31970 net.cpp:228] data does not need backward computation.
+I0204 08:47:10.676168 31970 net.cpp:270] This network produces output loss
+I0204 08:47:10.676194 31970 net.cpp:283] Network initialization done.
+I0204 08:47:10.676890 31970 solver.cpp:181] Creating test net (#0) specified by net file: /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/train_val.prototxt
+I0204 08:47:10.676940 31970 net.cpp:322] The NetState phase (1) differed from the phase (0) specified by a rule in layer data
+I0204 08:47:10.677220 31970 net.cpp:49] Initializing net from parameters: 
+name: "CaffeNet"
+state {
+  phase: TEST
+}
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    mirror: false
+    crop_size: 227
+    mean_file: "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db/mean_file.binaryproto"
+  }
+  data_param {
+    source: "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 11
+    stride: 4
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "pool1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "norm1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 2
+    kernel_size: 5
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "pool2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "norm2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "conv4"
+  top: "conv5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "conv5"
+  top: "conv5"
+}
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "pool5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 256
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "fc6"
+  top: "fc6"
+}
+layer {
+  name: "drop6"
+  type: "Dropout"
+  bottom: "fc6"
+  top: "fc6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc7"
+  type: "InnerProduct"
+  bottom: "fc6"
+  top: "fc7"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 256
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "fc7"
+  top: "fc7"
+}
+layer {
+  name: "drop7"
+  type: "Dropout"
+  bottom: "fc7"
+  top: "fc7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc8"
+  type: "InnerProduct"
+  bottom: "fc7"
+  top: "fc8"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "fc8"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc8"
+  bottom: "label"
+  top: "loss"
+}
+I0204 08:47:10.677366 31970 layer_factory.hpp:77] Creating layer data
+I0204 08:47:10.677516 31970 net.cpp:106] Creating Layer data
+I0204 08:47:10.677527 31970 net.cpp:411] data -> data
+I0204 08:47:10.677541 31970 net.cpp:411] data -> label
+I0204 08:47:10.677552 31970 data_transformer.cpp:25] Loading mean file from: /home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db/mean_file.binaryproto
+I0204 08:47:10.685077 31988 db_lmdb.cpp:38] Opened lmdb /home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db
+I0204 08:47:10.685266 31970 data_layer.cpp:41] output data size: 100,1,227,227
+I0204 08:47:10.725667 31970 net.cpp:150] Setting up data
+I0204 08:47:10.725708 31970 net.cpp:157] Top shape: 100 1 227 227 (5152900)
+I0204 08:47:10.725718 31970 net.cpp:157] Top shape: 100 (100)
+I0204 08:47:10.725723 31970 net.cpp:165] Memory required for data: 20612000
+I0204 08:47:10.725733 31970 layer_factory.hpp:77] Creating layer label_data_1_split
+I0204 08:47:10.725750 31970 net.cpp:106] Creating Layer label_data_1_split
+I0204 08:47:10.725759 31970 net.cpp:454] label_data_1_split <- label
+I0204 08:47:10.725769 31970 net.cpp:411] label_data_1_split -> label_data_1_split_0
+I0204 08:47:10.725785 31970 net.cpp:411] label_data_1_split -> label_data_1_split_1
+I0204 08:47:10.725797 31970 net.cpp:150] Setting up label_data_1_split
+I0204 08:47:10.725805 31970 net.cpp:157] Top shape: 100 (100)
+I0204 08:47:10.725811 31970 net.cpp:157] Top shape: 100 (100)
+I0204 08:47:10.725816 31970 net.cpp:165] Memory required for data: 20612800
+I0204 08:47:10.725821 31970 layer_factory.hpp:77] Creating layer conv1
+I0204 08:47:10.725836 31970 net.cpp:106] Creating Layer conv1
+I0204 08:47:10.725842 31970 net.cpp:454] conv1 <- data
+I0204 08:47:10.725852 31970 net.cpp:411] conv1 -> conv1
+I0204 08:47:10.725906 31970 net.cpp:150] Setting up conv1
+I0204 08:47:10.725915 31970 net.cpp:157] Top shape: 100 16 55 55 (4840000)
+I0204 08:47:10.725935 31970 net.cpp:165] Memory required for data: 39972800
+I0204 08:47:10.725952 31970 layer_factory.hpp:77] Creating layer relu1
+I0204 08:47:10.726009 31970 net.cpp:106] Creating Layer relu1
+I0204 08:47:10.726019 31970 net.cpp:454] relu1 <- conv1
+I0204 08:47:10.726027 31970 net.cpp:397] relu1 -> conv1 (in-place)
+I0204 08:47:10.726038 31970 net.cpp:150] Setting up relu1
+I0204 08:47:10.726047 31970 net.cpp:157] Top shape: 100 16 55 55 (4840000)
+I0204 08:47:10.726052 31970 net.cpp:165] Memory required for data: 59332800
+I0204 08:47:10.726058 31970 layer_factory.hpp:77] Creating layer pool1
+I0204 08:47:10.726069 31970 net.cpp:106] Creating Layer pool1
+I0204 08:47:10.726075 31970 net.cpp:454] pool1 <- conv1
+I0204 08:47:10.726083 31970 net.cpp:411] pool1 -> pool1
+I0204 08:47:10.726096 31970 net.cpp:150] Setting up pool1
+I0204 08:47:10.726104 31970 net.cpp:157] Top shape: 100 16 27 27 (1166400)
+I0204 08:47:10.726109 31970 net.cpp:165] Memory required for data: 63998400
+I0204 08:47:10.726114 31970 layer_factory.hpp:77] Creating layer norm1
+I0204 08:47:10.726125 31970 net.cpp:106] Creating Layer norm1
+I0204 08:47:10.726131 31970 net.cpp:454] norm1 <- pool1
+I0204 08:47:10.726140 31970 net.cpp:411] norm1 -> norm1
+I0204 08:47:10.726150 31970 net.cpp:150] Setting up norm1
+I0204 08:47:10.726156 31970 net.cpp:157] Top shape: 100 16 27 27 (1166400)
+I0204 08:47:10.726161 31970 net.cpp:165] Memory required for data: 68664000
+I0204 08:47:10.726167 31970 layer_factory.hpp:77] Creating layer conv2
+I0204 08:47:10.726177 31970 net.cpp:106] Creating Layer conv2
+I0204 08:47:10.726183 31970 net.cpp:454] conv2 <- norm1
+I0204 08:47:10.726191 31970 net.cpp:411] conv2 -> conv2
+I0204 08:47:10.726232 31970 net.cpp:150] Setting up conv2
+I0204 08:47:10.726239 31970 net.cpp:157] Top shape: 100 8 27 27 (583200)
+I0204 08:47:10.726249 31970 net.cpp:165] Memory required for data: 70996800
+I0204 08:47:10.726260 31970 layer_factory.hpp:77] Creating layer relu2
+I0204 08:47:10.726270 31970 net.cpp:106] Creating Layer relu2
+I0204 08:47:10.726276 31970 net.cpp:454] relu2 <- conv2
+I0204 08:47:10.726284 31970 net.cpp:397] relu2 -> conv2 (in-place)
+I0204 08:47:10.726301 31970 net.cpp:150] Setting up relu2
+I0204 08:47:10.726318 31970 net.cpp:157] Top shape: 100 8 27 27 (583200)
+I0204 08:47:10.726323 31970 net.cpp:165] Memory required for data: 73329600
+I0204 08:47:10.726330 31970 layer_factory.hpp:77] Creating layer pool2
+I0204 08:47:10.726341 31970 net.cpp:106] Creating Layer pool2
+I0204 08:47:10.726346 31970 net.cpp:454] pool2 <- conv2
+I0204 08:47:10.726354 31970 net.cpp:411] pool2 -> pool2
+I0204 08:47:10.726366 31970 net.cpp:150] Setting up pool2
+I0204 08:47:10.726372 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726377 31970 net.cpp:165] Memory required for data: 73870400
+I0204 08:47:10.726383 31970 layer_factory.hpp:77] Creating layer norm2
+I0204 08:47:10.726392 31970 net.cpp:106] Creating Layer norm2
+I0204 08:47:10.726398 31970 net.cpp:454] norm2 <- pool2
+I0204 08:47:10.726407 31970 net.cpp:411] norm2 -> norm2
+I0204 08:47:10.726415 31970 net.cpp:150] Setting up norm2
+I0204 08:47:10.726423 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726428 31970 net.cpp:165] Memory required for data: 74411200
+I0204 08:47:10.726433 31970 layer_factory.hpp:77] Creating layer conv3
+I0204 08:47:10.726443 31970 net.cpp:106] Creating Layer conv3
+I0204 08:47:10.726447 31970 net.cpp:454] conv3 <- norm2
+I0204 08:47:10.726455 31970 net.cpp:411] conv3 -> conv3
+I0204 08:47:10.726482 31970 net.cpp:150] Setting up conv3
+I0204 08:47:10.726490 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726495 31970 net.cpp:165] Memory required for data: 74952000
+I0204 08:47:10.726505 31970 layer_factory.hpp:77] Creating layer relu3
+I0204 08:47:10.726513 31970 net.cpp:106] Creating Layer relu3
+I0204 08:47:10.726518 31970 net.cpp:454] relu3 <- conv3
+I0204 08:47:10.726526 31970 net.cpp:397] relu3 -> conv3 (in-place)
+I0204 08:47:10.726536 31970 net.cpp:150] Setting up relu3
+I0204 08:47:10.726542 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726547 31970 net.cpp:165] Memory required for data: 75492800
+I0204 08:47:10.726552 31970 layer_factory.hpp:77] Creating layer conv4
+I0204 08:47:10.726562 31970 net.cpp:106] Creating Layer conv4
+I0204 08:47:10.726567 31970 net.cpp:454] conv4 <- conv3
+I0204 08:47:10.726577 31970 net.cpp:411] conv4 -> conv4
+I0204 08:47:10.726598 31970 net.cpp:150] Setting up conv4
+I0204 08:47:10.726606 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726611 31970 net.cpp:165] Memory required for data: 76033600
+I0204 08:47:10.726619 31970 layer_factory.hpp:77] Creating layer relu4
+I0204 08:47:10.726626 31970 net.cpp:106] Creating Layer relu4
+I0204 08:47:10.726631 31970 net.cpp:454] relu4 <- conv4
+I0204 08:47:10.726639 31970 net.cpp:397] relu4 -> conv4 (in-place)
+I0204 08:47:10.726646 31970 net.cpp:150] Setting up relu4
+I0204 08:47:10.726654 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726658 31970 net.cpp:165] Memory required for data: 76574400
+I0204 08:47:10.726663 31970 layer_factory.hpp:77] Creating layer conv5
+I0204 08:47:10.726675 31970 net.cpp:106] Creating Layer conv5
+I0204 08:47:10.726680 31970 net.cpp:454] conv5 <- conv4
+I0204 08:47:10.726688 31970 net.cpp:411] conv5 -> conv5
+I0204 08:47:10.726711 31970 net.cpp:150] Setting up conv5
+I0204 08:47:10.726717 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726722 31970 net.cpp:165] Memory required for data: 77115200
+I0204 08:47:10.726732 31970 layer_factory.hpp:77] Creating layer relu5
+I0204 08:47:10.726742 31970 net.cpp:106] Creating Layer relu5
+I0204 08:47:10.726747 31970 net.cpp:454] relu5 <- conv5
+I0204 08:47:10.726754 31970 net.cpp:397] relu5 -> conv5 (in-place)
+I0204 08:47:10.726763 31970 net.cpp:150] Setting up relu5
+I0204 08:47:10.726768 31970 net.cpp:157] Top shape: 100 8 13 13 (135200)
+I0204 08:47:10.726773 31970 net.cpp:165] Memory required for data: 77656000
+I0204 08:47:10.726778 31970 layer_factory.hpp:77] Creating layer pool5
+I0204 08:47:10.726788 31970 net.cpp:106] Creating Layer pool5
+I0204 08:47:10.726794 31970 net.cpp:454] pool5 <- conv5
+I0204 08:47:10.726801 31970 net.cpp:411] pool5 -> pool5
+I0204 08:47:10.726817 31970 net.cpp:150] Setting up pool5
+I0204 08:47:10.726830 31970 net.cpp:157] Top shape: 100 8 6 6 (28800)
+I0204 08:47:10.726835 31970 net.cpp:165] Memory required for data: 77771200
+I0204 08:47:10.726840 31970 layer_factory.hpp:77] Creating layer fc6
+I0204 08:47:10.726850 31970 net.cpp:106] Creating Layer fc6
+I0204 08:47:10.726855 31970 net.cpp:454] fc6 <- pool5
+I0204 08:47:10.726863 31970 net.cpp:411] fc6 -> fc6
+I0204 08:47:10.727567 31970 net.cpp:150] Setting up fc6
+I0204 08:47:10.727581 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.727586 31970 net.cpp:165] Memory required for data: 77873600
+I0204 08:47:10.727594 31970 layer_factory.hpp:77] Creating layer relu6
+I0204 08:47:10.727602 31970 net.cpp:106] Creating Layer relu6
+I0204 08:47:10.727607 31970 net.cpp:454] relu6 <- fc6
+I0204 08:47:10.727617 31970 net.cpp:397] relu6 -> fc6 (in-place)
+I0204 08:47:10.727627 31970 net.cpp:150] Setting up relu6
+I0204 08:47:10.727632 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.727638 31970 net.cpp:165] Memory required for data: 77976000
+I0204 08:47:10.727643 31970 layer_factory.hpp:77] Creating layer drop6
+I0204 08:47:10.727653 31970 net.cpp:106] Creating Layer drop6
+I0204 08:47:10.727659 31970 net.cpp:454] drop6 <- fc6
+I0204 08:47:10.727666 31970 net.cpp:397] drop6 -> fc6 (in-place)
+I0204 08:47:10.727677 31970 net.cpp:150] Setting up drop6
+I0204 08:47:10.727684 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.727689 31970 net.cpp:165] Memory required for data: 78078400
+I0204 08:47:10.727694 31970 layer_factory.hpp:77] Creating layer fc7
+I0204 08:47:10.727705 31970 net.cpp:106] Creating Layer fc7
+I0204 08:47:10.727710 31970 net.cpp:454] fc7 <- fc6
+I0204 08:47:10.727720 31970 net.cpp:411] fc7 -> fc7
+I0204 08:47:10.728420 31970 net.cpp:150] Setting up fc7
+I0204 08:47:10.728431 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.728437 31970 net.cpp:165] Memory required for data: 78180800
+I0204 08:47:10.728446 31970 layer_factory.hpp:77] Creating layer relu7
+I0204 08:47:10.728456 31970 net.cpp:106] Creating Layer relu7
+I0204 08:47:10.728461 31970 net.cpp:454] relu7 <- fc7
+I0204 08:47:10.728468 31970 net.cpp:397] relu7 -> fc7 (in-place)
+I0204 08:47:10.728477 31970 net.cpp:150] Setting up relu7
+I0204 08:47:10.728483 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.728488 31970 net.cpp:165] Memory required for data: 78283200
+I0204 08:47:10.728495 31970 layer_factory.hpp:77] Creating layer drop7
+I0204 08:47:10.728505 31970 net.cpp:106] Creating Layer drop7
+I0204 08:47:10.728512 31970 net.cpp:454] drop7 <- fc7
+I0204 08:47:10.728518 31970 net.cpp:397] drop7 -> fc7 (in-place)
+I0204 08:47:10.728528 31970 net.cpp:150] Setting up drop7
+I0204 08:47:10.728533 31970 net.cpp:157] Top shape: 100 256 (25600)
+I0204 08:47:10.728538 31970 net.cpp:165] Memory required for data: 78385600
+I0204 08:47:10.728543 31970 layer_factory.hpp:77] Creating layer fc8
+I0204 08:47:10.728552 31970 net.cpp:106] Creating Layer fc8
+I0204 08:47:10.728557 31970 net.cpp:454] fc8 <- fc7
+I0204 08:47:10.728566 31970 net.cpp:411] fc8 -> fc8
+I0204 08:47:10.728595 31970 net.cpp:150] Setting up fc8
+I0204 08:47:10.728601 31970 net.cpp:157] Top shape: 100 2 (200)
+I0204 08:47:10.728606 31970 net.cpp:165] Memory required for data: 78386400
+I0204 08:47:10.728615 31970 layer_factory.hpp:77] Creating layer fc8_fc8_0_split
+I0204 08:47:10.728624 31970 net.cpp:106] Creating Layer fc8_fc8_0_split
+I0204 08:47:10.728629 31970 net.cpp:454] fc8_fc8_0_split <- fc8
+I0204 08:47:10.728636 31970 net.cpp:411] fc8_fc8_0_split -> fc8_fc8_0_split_0
+I0204 08:47:10.728646 31970 net.cpp:411] fc8_fc8_0_split -> fc8_fc8_0_split_1
+I0204 08:47:10.728655 31970 net.cpp:150] Setting up fc8_fc8_0_split
+I0204 08:47:10.728662 31970 net.cpp:157] Top shape: 100 2 (200)
+I0204 08:47:10.728668 31970 net.cpp:157] Top shape: 100 2 (200)
+I0204 08:47:10.728673 31970 net.cpp:165] Memory required for data: 78388000
+I0204 08:47:10.728678 31970 layer_factory.hpp:77] Creating layer accuracy
+I0204 08:47:10.728691 31970 net.cpp:106] Creating Layer accuracy
+I0204 08:47:10.728701 31970 net.cpp:454] accuracy <- fc8_fc8_0_split_0
+I0204 08:47:10.728715 31970 net.cpp:454] accuracy <- label_data_1_split_0
+I0204 08:47:10.728724 31970 net.cpp:411] accuracy -> accuracy
+I0204 08:47:10.728734 31970 net.cpp:150] Setting up accuracy
+I0204 08:47:10.728740 31970 net.cpp:157] Top shape: (1)
+I0204 08:47:10.728745 31970 net.cpp:165] Memory required for data: 78388004
+I0204 08:47:10.728751 31970 layer_factory.hpp:77] Creating layer loss
+I0204 08:47:10.728760 31970 net.cpp:106] Creating Layer loss
+I0204 08:47:10.728766 31970 net.cpp:454] loss <- fc8_fc8_0_split_1
+I0204 08:47:10.728773 31970 net.cpp:454] loss <- label_data_1_split_1
+I0204 08:47:10.728781 31970 net.cpp:411] loss -> loss
+I0204 08:47:10.728792 31970 layer_factory.hpp:77] Creating layer loss
+I0204 08:47:10.728811 31970 net.cpp:150] Setting up loss
+I0204 08:47:10.728817 31970 net.cpp:157] Top shape: (1)
+I0204 08:47:10.728822 31970 net.cpp:160]     with loss weight 1
+I0204 08:47:10.728835 31970 net.cpp:165] Memory required for data: 78388008
+I0204 08:47:10.728842 31970 net.cpp:226] loss needs backward computation.
+I0204 08:47:10.728847 31970 net.cpp:228] accuracy does not need backward computation.
+I0204 08:47:10.728857 31970 net.cpp:226] fc8_fc8_0_split needs backward computation.
+I0204 08:47:10.728863 31970 net.cpp:226] fc8 needs backward computation.
+I0204 08:47:10.728868 31970 net.cpp:226] drop7 needs backward computation.
+I0204 08:47:10.728873 31970 net.cpp:226] relu7 needs backward computation.
+I0204 08:47:10.728878 31970 net.cpp:226] fc7 needs backward computation.
+I0204 08:47:10.728884 31970 net.cpp:226] drop6 needs backward computation.
+I0204 08:47:10.728889 31970 net.cpp:226] relu6 needs backward computation.
+I0204 08:47:10.728894 31970 net.cpp:226] fc6 needs backward computation.
+I0204 08:47:10.728900 31970 net.cpp:226] pool5 needs backward computation.
+I0204 08:47:10.728905 31970 net.cpp:226] relu5 needs backward computation.
+I0204 08:47:10.728911 31970 net.cpp:226] conv5 needs backward computation.
+I0204 08:47:10.728919 31970 net.cpp:226] relu4 needs backward computation.
+I0204 08:47:10.728929 31970 net.cpp:226] conv4 needs backward computation.
+I0204 08:47:10.728935 31970 net.cpp:226] relu3 needs backward computation.
+I0204 08:47:10.728940 31970 net.cpp:226] conv3 needs backward computation.
+I0204 08:47:10.728946 31970 net.cpp:226] norm2 needs backward computation.
+I0204 08:47:10.728953 31970 net.cpp:226] pool2 needs backward computation.
+I0204 08:47:10.728958 31970 net.cpp:226] relu2 needs backward computation.
+I0204 08:47:10.728965 31970 net.cpp:226] conv2 needs backward computation.
+I0204 08:47:10.728970 31970 net.cpp:226] norm1 needs backward computation.
+I0204 08:47:10.728976 31970 net.cpp:226] pool1 needs backward computation.
+I0204 08:47:10.728981 31970 net.cpp:226] relu1 needs backward computation.
+I0204 08:47:10.728987 31970 net.cpp:226] conv1 needs backward computation.
+I0204 08:47:10.728996 31970 net.cpp:228] label_data_1_split does not need backward computation.
+I0204 08:47:10.729002 31970 net.cpp:228] data does not need backward computation.
+I0204 08:47:10.729007 31970 net.cpp:270] This network produces output accuracy
+I0204 08:47:10.729013 31970 net.cpp:270] This network produces output loss
+I0204 08:47:10.729042 31970 net.cpp:283] Network initialization done.
+I0204 08:47:10.729140 31970 solver.cpp:60] Solver scaffolding done.
+I0204 08:47:10.729194 31970 caffe.cpp:212] Starting Optimization
+I0204 08:47:10.729202 31970 solver.cpp:288] Solving CaffeNet
+I0204 08:47:10.729207 31970 solver.cpp:289] Learning Rate Policy: step
+I0204 08:47:10.729604 31970 solver.cpp:341] Iteration 0, Testing net (#0)
+I0204 08:47:10.729658 31970 blocking_queue.cpp:50] Data layer prefetch queue empty
+I0204 08:47:15.051576 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:47:15.051651 31970 solver.cpp:409]     Test net output #1: loss = 11.2706 (* 1 = 11.2706 loss)
+I0204 08:47:16.038830 31970 solver.cpp:237] Iteration 0, loss = 12.2128
+I0204 08:47:16.038893 31970 solver.cpp:253]     Train net output #0: loss = 12.2128 (* 1 = 12.2128 loss)
+I0204 08:47:16.038918 31970 sgd_solver.cpp:106] Iteration 0, lr = 0.001
+I0204 08:47:24.863983 31970 solver.cpp:237] Iteration 10, loss = 1.43474
+I0204 08:47:24.864058 31970 solver.cpp:253]     Train net output #0: loss = 1.43474 (* 1 = 1.43474 loss)
+I0204 08:47:24.864071 31970 sgd_solver.cpp:106] Iteration 10, lr = 0.001
+I0204 08:47:33.631247 31970 solver.cpp:237] Iteration 20, loss = 0.847116
+I0204 08:47:33.631314 31970 solver.cpp:253]     Train net output #0: loss = 0.847116 (* 1 = 0.847116 loss)
+I0204 08:47:33.631326 31970 sgd_solver.cpp:106] Iteration 20, lr = 0.001
+I0204 08:47:42.473572 31970 solver.cpp:237] Iteration 30, loss = 1.0202
+I0204 08:47:42.473707 31970 solver.cpp:253]     Train net output #0: loss = 1.0202 (* 1 = 1.0202 loss)
+I0204 08:47:42.473721 31970 sgd_solver.cpp:106] Iteration 30, lr = 0.001
+I0204 08:47:51.240835 31970 solver.cpp:237] Iteration 40, loss = 0.766346
+I0204 08:47:51.240906 31970 solver.cpp:253]     Train net output #0: loss = 0.766346 (* 1 = 0.766346 loss)
+I0204 08:47:51.240919 31970 sgd_solver.cpp:106] Iteration 40, lr = 0.001
+I0204 08:47:59.955629 31970 solver.cpp:237] Iteration 50, loss = 0.814782
+I0204 08:47:59.955703 31970 solver.cpp:253]     Train net output #0: loss = 0.814782 (* 1 = 0.814782 loss)
+I0204 08:47:59.955715 31970 sgd_solver.cpp:106] Iteration 50, lr = 0.001
+I0204 08:48:08.979552 31970 solver.cpp:237] Iteration 60, loss = 0.851121
+I0204 08:48:08.979624 31970 solver.cpp:253]     Train net output #0: loss = 0.851121 (* 1 = 0.851121 loss)
+I0204 08:48:08.979637 31970 sgd_solver.cpp:106] Iteration 60, lr = 0.001
+I0204 08:48:18.121091 31970 solver.cpp:237] Iteration 70, loss = 0.768814
+I0204 08:48:18.121248 31970 solver.cpp:253]     Train net output #0: loss = 0.768814 (* 1 = 0.768814 loss)
+I0204 08:48:18.121259 31970 sgd_solver.cpp:106] Iteration 70, lr = 0.001
+I0204 08:48:26.961472 31970 solver.cpp:237] Iteration 80, loss = 0.724994
+I0204 08:48:26.961530 31970 solver.cpp:253]     Train net output #0: loss = 0.724994 (* 1 = 0.724994 loss)
+I0204 08:48:26.961542 31970 sgd_solver.cpp:106] Iteration 80, lr = 0.001
+I0204 08:48:35.860967 31970 solver.cpp:237] Iteration 90, loss = 0.753495
+I0204 08:48:35.861018 31970 solver.cpp:253]     Train net output #0: loss = 0.753495 (* 1 = 0.753495 loss)
+I0204 08:48:35.861030 31970 sgd_solver.cpp:106] Iteration 90, lr = 0.001
+I0204 08:48:43.858393 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_100.caffemodel
+I0204 08:48:43.860818 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_100.solverstate
+I0204 08:48:43.861726 31970 solver.cpp:341] Iteration 100, Testing net (#0)
+I0204 08:48:48.122367 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:48:48.122529 31970 solver.cpp:409]     Test net output #1: loss = 0.698968 (* 1 = 0.698968 loss)
+I0204 08:48:49.011724 31970 solver.cpp:237] Iteration 100, loss = 0.685752
+I0204 08:48:49.011776 31970 solver.cpp:253]     Train net output #0: loss = 0.685752 (* 1 = 0.685752 loss)
+I0204 08:48:49.011788 31970 sgd_solver.cpp:106] Iteration 100, lr = 0.001
+I0204 08:48:57.955689 31970 solver.cpp:237] Iteration 110, loss = 0.746259
+I0204 08:48:57.955755 31970 solver.cpp:253]     Train net output #0: loss = 0.746259 (* 1 = 0.746259 loss)
+I0204 08:48:57.955768 31970 sgd_solver.cpp:106] Iteration 110, lr = 0.001
+I0204 08:49:06.752331 31970 solver.cpp:237] Iteration 120, loss = 0.732187
+I0204 08:49:06.752399 31970 solver.cpp:253]     Train net output #0: loss = 0.732187 (* 1 = 0.732187 loss)
+I0204 08:49:06.752411 31970 sgd_solver.cpp:106] Iteration 120, lr = 0.001
+I0204 08:49:15.652076 31970 solver.cpp:237] Iteration 130, loss = 0.706334
+I0204 08:49:15.652143 31970 solver.cpp:253]     Train net output #0: loss = 0.706334 (* 1 = 0.706334 loss)
+I0204 08:49:15.652155 31970 sgd_solver.cpp:106] Iteration 130, lr = 0.001
+I0204 08:49:24.634552 31970 solver.cpp:237] Iteration 140, loss = 0.792215
+I0204 08:49:24.634752 31970 solver.cpp:253]     Train net output #0: loss = 0.792215 (* 1 = 0.792215 loss)
+I0204 08:49:24.634766 31970 sgd_solver.cpp:106] Iteration 140, lr = 0.001
+I0204 08:49:33.434015 31970 solver.cpp:237] Iteration 150, loss = 0.761618
+I0204 08:49:33.434087 31970 solver.cpp:253]     Train net output #0: loss = 0.761618 (* 1 = 0.761618 loss)
+I0204 08:49:33.434099 31970 sgd_solver.cpp:106] Iteration 150, lr = 0.001
+I0204 08:49:42.263944 31970 solver.cpp:237] Iteration 160, loss = 0.709637
+I0204 08:49:42.264008 31970 solver.cpp:253]     Train net output #0: loss = 0.709637 (* 1 = 0.709637 loss)
+I0204 08:49:42.264021 31970 sgd_solver.cpp:106] Iteration 160, lr = 0.001
+I0204 08:49:51.131613 31970 solver.cpp:237] Iteration 170, loss = 0.775628
+I0204 08:49:51.131681 31970 solver.cpp:253]     Train net output #0: loss = 0.775628 (* 1 = 0.775628 loss)
+I0204 08:49:51.131693 31970 sgd_solver.cpp:106] Iteration 170, lr = 0.001
+I0204 08:49:59.888748 31970 solver.cpp:237] Iteration 180, loss = 0.726066
+I0204 08:49:59.888934 31970 solver.cpp:253]     Train net output #0: loss = 0.726066 (* 1 = 0.726066 loss)
+I0204 08:49:59.888947 31970 sgd_solver.cpp:106] Iteration 180, lr = 0.001
+I0204 08:50:08.783133 31970 solver.cpp:237] Iteration 190, loss = 0.70639
+I0204 08:50:08.783200 31970 solver.cpp:253]     Train net output #0: loss = 0.70639 (* 1 = 0.70639 loss)
+I0204 08:50:08.783212 31970 sgd_solver.cpp:106] Iteration 190, lr = 0.001
+I0204 08:50:16.656956 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_200.caffemodel
+I0204 08:50:16.659364 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_200.solverstate
+I0204 08:50:16.660380 31970 solver.cpp:341] Iteration 200, Testing net (#0)
+I0204 08:50:20.870947 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:50:20.871011 31970 solver.cpp:409]     Test net output #1: loss = 0.693891 (* 1 = 0.693891 loss)
+I0204 08:50:21.738508 31970 solver.cpp:237] Iteration 200, loss = 0.737193
+I0204 08:50:21.738564 31970 solver.cpp:253]     Train net output #0: loss = 0.737193 (* 1 = 0.737193 loss)
+I0204 08:50:21.738576 31970 sgd_solver.cpp:106] Iteration 200, lr = 0.001
+I0204 08:50:30.498404 31970 solver.cpp:237] Iteration 210, loss = 0.720338
+I0204 08:50:30.498886 31970 solver.cpp:253]     Train net output #0: loss = 0.720338 (* 1 = 0.720338 loss)
+I0204 08:50:30.498901 31970 sgd_solver.cpp:106] Iteration 210, lr = 0.001
+I0204 08:50:39.334512 31970 solver.cpp:237] Iteration 220, loss = 0.738476
+I0204 08:50:39.334583 31970 solver.cpp:253]     Train net output #0: loss = 0.738476 (* 1 = 0.738476 loss)
+I0204 08:50:39.334595 31970 sgd_solver.cpp:106] Iteration 220, lr = 0.001
+I0204 08:50:48.072958 31970 solver.cpp:237] Iteration 230, loss = 0.697781
+I0204 08:50:48.073029 31970 solver.cpp:253]     Train net output #0: loss = 0.697781 (* 1 = 0.697781 loss)
+I0204 08:50:48.073041 31970 sgd_solver.cpp:106] Iteration 230, lr = 0.001
+I0204 08:50:56.887435 31970 solver.cpp:237] Iteration 240, loss = 0.68536
+I0204 08:50:56.887506 31970 solver.cpp:253]     Train net output #0: loss = 0.68536 (* 1 = 0.68536 loss)
+I0204 08:50:56.887517 31970 sgd_solver.cpp:106] Iteration 240, lr = 0.001
+I0204 08:51:05.703394 31970 solver.cpp:237] Iteration 250, loss = 0.769708
+I0204 08:51:05.703606 31970 solver.cpp:253]     Train net output #0: loss = 0.769708 (* 1 = 0.769708 loss)
+I0204 08:51:05.703620 31970 sgd_solver.cpp:106] Iteration 250, lr = 0.001
+I0204 08:51:14.642298 31970 solver.cpp:237] Iteration 260, loss = 0.705128
+I0204 08:51:14.642359 31970 solver.cpp:253]     Train net output #0: loss = 0.705128 (* 1 = 0.705128 loss)
+I0204 08:51:14.642371 31970 sgd_solver.cpp:106] Iteration 260, lr = 0.001
+I0204 08:51:23.615172 31970 solver.cpp:237] Iteration 270, loss = 0.737738
+I0204 08:51:23.615269 31970 solver.cpp:253]     Train net output #0: loss = 0.737738 (* 1 = 0.737738 loss)
+I0204 08:51:23.615283 31970 sgd_solver.cpp:106] Iteration 270, lr = 0.001
+I0204 08:51:32.428400 31970 solver.cpp:237] Iteration 280, loss = 0.719684
+I0204 08:51:32.428462 31970 solver.cpp:253]     Train net output #0: loss = 0.719684 (* 1 = 0.719684 loss)
+I0204 08:51:32.428473 31970 sgd_solver.cpp:106] Iteration 280, lr = 0.001
+I0204 08:51:41.169728 31970 solver.cpp:237] Iteration 290, loss = 0.71674
+I0204 08:51:41.169931 31970 solver.cpp:253]     Train net output #0: loss = 0.71674 (* 1 = 0.71674 loss)
+I0204 08:51:41.169945 31970 sgd_solver.cpp:106] Iteration 290, lr = 0.001
+I0204 08:51:49.008399 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_300.caffemodel
+I0204 08:51:49.010646 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_300.solverstate
+I0204 08:51:49.011590 31970 solver.cpp:341] Iteration 300, Testing net (#0)
+I0204 08:51:53.188884 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:51:53.188951 31970 solver.cpp:409]     Test net output #1: loss = 0.700022 (* 1 = 0.700022 loss)
+I0204 08:51:54.063798 31970 solver.cpp:237] Iteration 300, loss = 0.735509
+I0204 08:51:54.063854 31970 solver.cpp:253]     Train net output #0: loss = 0.735509 (* 1 = 0.735509 loss)
+I0204 08:51:54.063866 31970 sgd_solver.cpp:106] Iteration 300, lr = 0.001
+I0204 08:52:02.787946 31970 solver.cpp:237] Iteration 310, loss = 0.734692
+I0204 08:52:02.788012 31970 solver.cpp:253]     Train net output #0: loss = 0.734692 (* 1 = 0.734692 loss)
+I0204 08:52:02.788023 31970 sgd_solver.cpp:106] Iteration 310, lr = 0.001
+I0204 08:52:11.536556 31970 solver.cpp:237] Iteration 320, loss = 0.714698
+I0204 08:52:11.536731 31970 solver.cpp:253]     Train net output #0: loss = 0.714698 (* 1 = 0.714698 loss)
+I0204 08:52:11.536743 31970 sgd_solver.cpp:106] Iteration 320, lr = 0.001
+I0204 08:52:20.414258 31970 solver.cpp:237] Iteration 330, loss = 0.735871
+I0204 08:52:20.414329 31970 solver.cpp:253]     Train net output #0: loss = 0.735871 (* 1 = 0.735871 loss)
+I0204 08:52:20.414340 31970 sgd_solver.cpp:106] Iteration 330, lr = 0.001
+I0204 08:52:29.202983 31970 solver.cpp:237] Iteration 340, loss = 0.705738
+I0204 08:52:29.203048 31970 solver.cpp:253]     Train net output #0: loss = 0.705738 (* 1 = 0.705738 loss)
+I0204 08:52:29.203061 31970 sgd_solver.cpp:106] Iteration 340, lr = 0.001
+I0204 08:52:38.015250 31970 solver.cpp:237] Iteration 350, loss = 0.713733
+I0204 08:52:38.015313 31970 solver.cpp:253]     Train net output #0: loss = 0.713733 (* 1 = 0.713733 loss)
+I0204 08:52:38.015326 31970 sgd_solver.cpp:106] Iteration 350, lr = 0.001
+I0204 08:52:46.824594 31970 solver.cpp:237] Iteration 360, loss = 0.711975
+I0204 08:52:46.824765 31970 solver.cpp:253]     Train net output #0: loss = 0.711975 (* 1 = 0.711975 loss)
+I0204 08:52:46.824779 31970 sgd_solver.cpp:106] Iteration 360, lr = 0.001
+I0204 08:52:55.674610 31970 solver.cpp:237] Iteration 370, loss = 0.714968
+I0204 08:52:55.674671 31970 solver.cpp:253]     Train net output #0: loss = 0.714968 (* 1 = 0.714968 loss)
+I0204 08:52:55.674684 31970 sgd_solver.cpp:106] Iteration 370, lr = 0.001
+I0204 08:53:04.616919 31970 solver.cpp:237] Iteration 380, loss = 0.724979
+I0204 08:53:04.616984 31970 solver.cpp:253]     Train net output #0: loss = 0.724979 (* 1 = 0.724979 loss)
+I0204 08:53:04.616997 31970 sgd_solver.cpp:106] Iteration 380, lr = 0.001
+I0204 08:53:13.539403 31970 solver.cpp:237] Iteration 390, loss = 0.713167
+I0204 08:53:13.539469 31970 solver.cpp:253]     Train net output #0: loss = 0.713167 (* 1 = 0.713167 loss)
+I0204 08:53:13.539481 31970 sgd_solver.cpp:106] Iteration 390, lr = 0.001
+I0204 08:53:21.277716 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_400.caffemodel
+I0204 08:53:21.280020 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_400.solverstate
+I0204 08:53:21.280972 31970 solver.cpp:341] Iteration 400, Testing net (#0)
+I0204 08:53:25.373695 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:53:25.373744 31970 solver.cpp:409]     Test net output #1: loss = 0.695529 (* 1 = 0.695529 loss)
+I0204 08:53:26.234237 31970 solver.cpp:237] Iteration 400, loss = 0.692406
+I0204 08:53:26.234284 31970 solver.cpp:253]     Train net output #0: loss = 0.692406 (* 1 = 0.692406 loss)
+I0204 08:53:26.234295 31970 sgd_solver.cpp:106] Iteration 400, lr = 0.001
+I0204 08:53:34.849371 31970 solver.cpp:237] Iteration 410, loss = 0.732245
+I0204 08:53:34.849426 31970 solver.cpp:253]     Train net output #0: loss = 0.732245 (* 1 = 0.732245 loss)
+I0204 08:53:34.849436 31970 sgd_solver.cpp:106] Iteration 410, lr = 0.001
+I0204 08:53:43.434465 31970 solver.cpp:237] Iteration 420, loss = 0.686814
+I0204 08:53:43.434516 31970 solver.cpp:253]     Train net output #0: loss = 0.686814 (* 1 = 0.686814 loss)
+I0204 08:53:43.434528 31970 sgd_solver.cpp:106] Iteration 420, lr = 0.001
+I0204 08:53:52.060181 31970 solver.cpp:237] Iteration 430, loss = 0.711367
+I0204 08:53:52.060350 31970 solver.cpp:253]     Train net output #0: loss = 0.711367 (* 1 = 0.711367 loss)
+I0204 08:53:52.060366 31970 sgd_solver.cpp:106] Iteration 430, lr = 0.001
+I0204 08:54:00.617832 31970 solver.cpp:237] Iteration 440, loss = 0.701473
+I0204 08:54:00.617887 31970 solver.cpp:253]     Train net output #0: loss = 0.701473 (* 1 = 0.701473 loss)
+I0204 08:54:00.617897 31970 sgd_solver.cpp:106] Iteration 440, lr = 0.001
+I0204 08:54:09.251494 31970 solver.cpp:237] Iteration 450, loss = 0.713739
+I0204 08:54:09.251562 31970 solver.cpp:253]     Train net output #0: loss = 0.713739 (* 1 = 0.713739 loss)
+I0204 08:54:09.251574 31970 sgd_solver.cpp:106] Iteration 450, lr = 0.001
+I0204 08:54:17.858574 31970 solver.cpp:237] Iteration 460, loss = 0.6892
+I0204 08:54:17.858633 31970 solver.cpp:253]     Train net output #0: loss = 0.6892 (* 1 = 0.6892 loss)
+I0204 08:54:17.858644 31970 sgd_solver.cpp:106] Iteration 460, lr = 0.001
+I0204 08:54:26.444546 31970 solver.cpp:237] Iteration 470, loss = 0.692153
+I0204 08:54:26.444699 31970 solver.cpp:253]     Train net output #0: loss = 0.692153 (* 1 = 0.692153 loss)
+I0204 08:54:26.444710 31970 sgd_solver.cpp:106] Iteration 470, lr = 0.001
+I0204 08:54:35.043388 31970 solver.cpp:237] Iteration 480, loss = 0.691297
+I0204 08:54:35.043442 31970 solver.cpp:253]     Train net output #0: loss = 0.691297 (* 1 = 0.691297 loss)
+I0204 08:54:35.043454 31970 sgd_solver.cpp:106] Iteration 480, lr = 0.001
+I0204 08:54:43.812615 31970 solver.cpp:237] Iteration 490, loss = 0.714403
+I0204 08:54:43.812675 31970 solver.cpp:253]     Train net output #0: loss = 0.714403 (* 1 = 0.714403 loss)
+I0204 08:54:43.812688 31970 sgd_solver.cpp:106] Iteration 490, lr = 0.001
+I0204 08:54:51.603606 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_500.caffemodel
+I0204 08:54:51.605765 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_500.solverstate
+I0204 08:54:51.606706 31970 solver.cpp:341] Iteration 500, Testing net (#0)
+I0204 08:54:55.702286 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:54:55.702337 31970 solver.cpp:409]     Test net output #1: loss = 0.703857 (* 1 = 0.703857 loss)
+I0204 08:54:56.554611 31970 solver.cpp:237] Iteration 500, loss = 0.693009
+I0204 08:54:56.554752 31970 solver.cpp:253]     Train net output #0: loss = 0.693009 (* 1 = 0.693009 loss)
+I0204 08:54:56.554764 31970 sgd_solver.cpp:106] Iteration 500, lr = 0.001
+I0204 08:55:05.253319 31970 solver.cpp:237] Iteration 510, loss = 0.739572
+I0204 08:55:05.253403 31970 solver.cpp:253]     Train net output #0: loss = 0.739572 (* 1 = 0.739572 loss)
+I0204 08:55:05.253415 31970 sgd_solver.cpp:106] Iteration 510, lr = 0.001
+I0204 08:55:13.873795 31970 solver.cpp:237] Iteration 520, loss = 0.694575
+I0204 08:55:13.873867 31970 solver.cpp:253]     Train net output #0: loss = 0.694575 (* 1 = 0.694575 loss)
+I0204 08:55:13.873881 31970 sgd_solver.cpp:106] Iteration 520, lr = 0.001
+I0204 08:55:22.493284 31970 solver.cpp:237] Iteration 530, loss = 0.691472
+I0204 08:55:22.493350 31970 solver.cpp:253]     Train net output #0: loss = 0.691472 (* 1 = 0.691472 loss)
+I0204 08:55:22.493361 31970 sgd_solver.cpp:106] Iteration 530, lr = 0.001
+I0204 08:55:31.114028 31970 solver.cpp:237] Iteration 540, loss = 0.721691
+I0204 08:55:31.114243 31970 solver.cpp:253]     Train net output #0: loss = 0.721691 (* 1 = 0.721691 loss)
+I0204 08:55:31.114255 31970 sgd_solver.cpp:106] Iteration 540, lr = 0.001
+I0204 08:55:39.695590 31970 solver.cpp:237] Iteration 550, loss = 0.682696
+I0204 08:55:39.695652 31970 solver.cpp:253]     Train net output #0: loss = 0.682696 (* 1 = 0.682696 loss)
+I0204 08:55:39.695664 31970 sgd_solver.cpp:106] Iteration 550, lr = 0.001
+I0204 08:55:48.433385 31970 solver.cpp:237] Iteration 560, loss = 0.7069
+I0204 08:55:48.433460 31970 solver.cpp:253]     Train net output #0: loss = 0.7069 (* 1 = 0.7069 loss)
+I0204 08:55:48.433473 31970 sgd_solver.cpp:106] Iteration 560, lr = 0.001
+I0204 08:55:57.218037 31970 solver.cpp:237] Iteration 570, loss = 0.731514
+I0204 08:55:57.218111 31970 solver.cpp:253]     Train net output #0: loss = 0.731514 (* 1 = 0.731514 loss)
+I0204 08:55:57.218123 31970 sgd_solver.cpp:106] Iteration 570, lr = 0.001
+I0204 08:56:06.055601 31970 solver.cpp:237] Iteration 580, loss = 0.684801
+I0204 08:56:06.055738 31970 solver.cpp:253]     Train net output #0: loss = 0.684801 (* 1 = 0.684801 loss)
+I0204 08:56:06.055752 31970 sgd_solver.cpp:106] Iteration 580, lr = 0.001
+I0204 08:56:14.850085 31970 solver.cpp:237] Iteration 590, loss = 0.692865
+I0204 08:56:14.850152 31970 solver.cpp:253]     Train net output #0: loss = 0.692865 (* 1 = 0.692865 loss)
+I0204 08:56:14.850164 31970 sgd_solver.cpp:106] Iteration 590, lr = 0.001
+I0204 08:56:22.839342 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_600.caffemodel
+I0204 08:56:22.841678 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_600.solverstate
+I0204 08:56:22.842666 31970 solver.cpp:341] Iteration 600, Testing net (#0)
+I0204 08:56:27.022583 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:56:27.022646 31970 solver.cpp:409]     Test net output #1: loss = 0.693785 (* 1 = 0.693785 loss)
+I0204 08:56:27.898218 31970 solver.cpp:237] Iteration 600, loss = 0.699317
+I0204 08:56:27.898278 31970 solver.cpp:253]     Train net output #0: loss = 0.699317 (* 1 = 0.699317 loss)
+I0204 08:56:27.898290 31970 sgd_solver.cpp:106] Iteration 600, lr = 0.001
+I0204 08:56:36.658064 31970 solver.cpp:237] Iteration 610, loss = 0.679237
+I0204 08:56:36.658259 31970 solver.cpp:253]     Train net output #0: loss = 0.679237 (* 1 = 0.679237 loss)
+I0204 08:56:36.658272 31970 sgd_solver.cpp:106] Iteration 610, lr = 0.001
+I0204 08:56:45.517510 31970 solver.cpp:237] Iteration 620, loss = 0.699023
+I0204 08:56:45.517572 31970 solver.cpp:253]     Train net output #0: loss = 0.699023 (* 1 = 0.699023 loss)
+I0204 08:56:45.517585 31970 sgd_solver.cpp:106] Iteration 620, lr = 0.001
+I0204 08:56:54.366896 31970 solver.cpp:237] Iteration 630, loss = 0.674189
+I0204 08:56:54.366953 31970 solver.cpp:253]     Train net output #0: loss = 0.674189 (* 1 = 0.674189 loss)
+I0204 08:56:54.366966 31970 sgd_solver.cpp:106] Iteration 630, lr = 0.001
+I0204 08:57:03.170831 31970 solver.cpp:237] Iteration 640, loss = 0.691896
+I0204 08:57:03.170903 31970 solver.cpp:253]     Train net output #0: loss = 0.691896 (* 1 = 0.691896 loss)
+I0204 08:57:03.170933 31970 sgd_solver.cpp:106] Iteration 640, lr = 0.001
+I0204 08:57:12.016700 31970 solver.cpp:237] Iteration 650, loss = 0.748664
+I0204 08:57:12.016914 31970 solver.cpp:253]     Train net output #0: loss = 0.748664 (* 1 = 0.748664 loss)
+I0204 08:57:12.016927 31970 sgd_solver.cpp:106] Iteration 650, lr = 0.001
+I0204 08:57:20.961474 31970 solver.cpp:237] Iteration 660, loss = 0.691286
+I0204 08:57:20.961542 31970 solver.cpp:253]     Train net output #0: loss = 0.691286 (* 1 = 0.691286 loss)
+I0204 08:57:20.961555 31970 sgd_solver.cpp:106] Iteration 660, lr = 0.001
+I0204 08:57:29.803191 31970 solver.cpp:237] Iteration 670, loss = 0.697693
+I0204 08:57:29.803254 31970 solver.cpp:253]     Train net output #0: loss = 0.697693 (* 1 = 0.697693 loss)
+I0204 08:57:29.803266 31970 sgd_solver.cpp:106] Iteration 670, lr = 0.001
+I0204 08:57:38.620733 31970 solver.cpp:237] Iteration 680, loss = 0.71159
+I0204 08:57:38.620800 31970 solver.cpp:253]     Train net output #0: loss = 0.71159 (* 1 = 0.71159 loss)
+I0204 08:57:38.620812 31970 sgd_solver.cpp:106] Iteration 680, lr = 0.001
+I0204 08:57:47.470325 31970 solver.cpp:237] Iteration 690, loss = 0.714591
+I0204 08:57:47.470501 31970 solver.cpp:253]     Train net output #0: loss = 0.714591 (* 1 = 0.714591 loss)
+I0204 08:57:47.470515 31970 sgd_solver.cpp:106] Iteration 690, lr = 0.001
+I0204 08:57:55.384469 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_700.caffemodel
+I0204 08:57:55.386754 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_700.solverstate
+I0204 08:57:55.387708 31970 solver.cpp:341] Iteration 700, Testing net (#0)
+I0204 08:57:59.700085 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:57:59.700141 31970 solver.cpp:409]     Test net output #1: loss = 0.694174 (* 1 = 0.694174 loss)
+I0204 08:58:00.584492 31970 solver.cpp:237] Iteration 700, loss = 0.706786
+I0204 08:58:00.584547 31970 solver.cpp:253]     Train net output #0: loss = 0.706786 (* 1 = 0.706786 loss)
+I0204 08:58:00.584558 31970 sgd_solver.cpp:106] Iteration 700, lr = 0.001
+I0204 08:58:09.473798 31970 solver.cpp:237] Iteration 710, loss = 0.712998
+I0204 08:58:09.473860 31970 solver.cpp:253]     Train net output #0: loss = 0.712998 (* 1 = 0.712998 loss)
+I0204 08:58:09.473872 31970 sgd_solver.cpp:106] Iteration 710, lr = 0.001
+I0204 08:58:18.339823 31970 solver.cpp:237] Iteration 720, loss = 0.689928
+I0204 08:58:18.339957 31970 solver.cpp:253]     Train net output #0: loss = 0.689928 (* 1 = 0.689928 loss)
+I0204 08:58:18.339969 31970 sgd_solver.cpp:106] Iteration 720, lr = 0.001
+I0204 08:58:27.190908 31970 solver.cpp:237] Iteration 730, loss = 0.715217
+I0204 08:58:27.190982 31970 solver.cpp:253]     Train net output #0: loss = 0.715217 (* 1 = 0.715217 loss)
+I0204 08:58:27.190994 31970 sgd_solver.cpp:106] Iteration 730, lr = 0.001
+I0204 08:58:36.044682 31970 solver.cpp:237] Iteration 740, loss = 0.693972
+I0204 08:58:36.044735 31970 solver.cpp:253]     Train net output #0: loss = 0.693972 (* 1 = 0.693972 loss)
+I0204 08:58:36.044746 31970 sgd_solver.cpp:106] Iteration 740, lr = 0.001
+I0204 08:58:44.922261 31970 solver.cpp:237] Iteration 750, loss = 0.719021
+I0204 08:58:44.922320 31970 solver.cpp:253]     Train net output #0: loss = 0.719021 (* 1 = 0.719021 loss)
+I0204 08:58:44.922333 31970 sgd_solver.cpp:106] Iteration 750, lr = 0.001
+I0204 08:58:53.791558 31970 solver.cpp:237] Iteration 760, loss = 0.70034
+I0204 08:58:53.791725 31970 solver.cpp:253]     Train net output #0: loss = 0.70034 (* 1 = 0.70034 loss)
+I0204 08:58:53.791738 31970 sgd_solver.cpp:106] Iteration 760, lr = 0.001
+I0204 08:59:02.646237 31970 solver.cpp:237] Iteration 770, loss = 0.715869
+I0204 08:59:02.646293 31970 solver.cpp:253]     Train net output #0: loss = 0.715869 (* 1 = 0.715869 loss)
+I0204 08:59:02.646304 31970 sgd_solver.cpp:106] Iteration 770, lr = 0.001
+I0204 08:59:11.635792 31970 solver.cpp:237] Iteration 780, loss = 0.701716
+I0204 08:59:11.635851 31970 solver.cpp:253]     Train net output #0: loss = 0.701716 (* 1 = 0.701716 loss)
+I0204 08:59:11.635864 31970 sgd_solver.cpp:106] Iteration 780, lr = 0.001
+I0204 08:59:20.498247 31970 solver.cpp:237] Iteration 790, loss = 0.743789
+I0204 08:59:20.498301 31970 solver.cpp:253]     Train net output #0: loss = 0.743789 (* 1 = 0.743789 loss)
+I0204 08:59:20.498313 31970 sgd_solver.cpp:106] Iteration 790, lr = 0.001
+I0204 08:59:28.382889 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_800.caffemodel
+I0204 08:59:28.385431 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_800.solverstate
+I0204 08:59:28.386515 31970 solver.cpp:341] Iteration 800, Testing net (#0)
+I0204 08:59:32.458729 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 08:59:32.458791 31970 solver.cpp:409]     Test net output #1: loss = 0.69347 (* 1 = 0.69347 loss)
+I0204 08:59:33.330390 31970 solver.cpp:237] Iteration 800, loss = 0.679399
+I0204 08:59:33.330441 31970 solver.cpp:253]     Train net output #0: loss = 0.679399 (* 1 = 0.679399 loss)
+I0204 08:59:33.330454 31970 sgd_solver.cpp:106] Iteration 800, lr = 0.001
+I0204 08:59:41.998911 31970 solver.cpp:237] Iteration 810, loss = 0.721976
+I0204 08:59:41.998965 31970 solver.cpp:253]     Train net output #0: loss = 0.721976 (* 1 = 0.721976 loss)
+I0204 08:59:41.998976 31970 sgd_solver.cpp:106] Iteration 810, lr = 0.001
+I0204 08:59:50.634207 31970 solver.cpp:237] Iteration 820, loss = 0.683062
+I0204 08:59:50.634274 31970 solver.cpp:253]     Train net output #0: loss = 0.683062 (* 1 = 0.683062 loss)
+I0204 08:59:50.634285 31970 sgd_solver.cpp:106] Iteration 820, lr = 0.001
+I0204 08:59:59.307575 31970 solver.cpp:237] Iteration 830, loss = 0.693096
+I0204 08:59:59.307752 31970 solver.cpp:253]     Train net output #0: loss = 0.693096 (* 1 = 0.693096 loss)
+I0204 08:59:59.307765 31970 sgd_solver.cpp:106] Iteration 830, lr = 0.001
+I0204 09:00:07.975757 31970 solver.cpp:237] Iteration 840, loss = 0.713939
+I0204 09:00:07.975810 31970 solver.cpp:253]     Train net output #0: loss = 0.713939 (* 1 = 0.713939 loss)
+I0204 09:00:07.975821 31970 sgd_solver.cpp:106] Iteration 840, lr = 0.001
+I0204 09:00:16.903591 31970 solver.cpp:237] Iteration 850, loss = 0.698729
+I0204 09:00:16.903656 31970 solver.cpp:253]     Train net output #0: loss = 0.698729 (* 1 = 0.698729 loss)
+I0204 09:00:16.903667 31970 sgd_solver.cpp:106] Iteration 850, lr = 0.001
+I0204 09:00:25.831048 31970 solver.cpp:237] Iteration 860, loss = 0.704036
+I0204 09:00:25.831120 31970 solver.cpp:253]     Train net output #0: loss = 0.704036 (* 1 = 0.704036 loss)
+I0204 09:00:25.831135 31970 sgd_solver.cpp:106] Iteration 860, lr = 0.001
+I0204 09:00:34.651641 31970 solver.cpp:237] Iteration 870, loss = 0.69928
+I0204 09:00:34.651813 31970 solver.cpp:253]     Train net output #0: loss = 0.69928 (* 1 = 0.69928 loss)
+I0204 09:00:34.651828 31970 sgd_solver.cpp:106] Iteration 870, lr = 0.001
+I0204 09:00:43.418618 31970 solver.cpp:237] Iteration 880, loss = 0.701096
+I0204 09:00:43.418687 31970 solver.cpp:253]     Train net output #0: loss = 0.701096 (* 1 = 0.701096 loss)
+I0204 09:00:43.418700 31970 sgd_solver.cpp:106] Iteration 880, lr = 0.001
+I0204 09:00:52.254040 31970 solver.cpp:237] Iteration 890, loss = 0.719546
+I0204 09:00:52.254112 31970 solver.cpp:253]     Train net output #0: loss = 0.719546 (* 1 = 0.719546 loss)
+I0204 09:00:52.254125 31970 sgd_solver.cpp:106] Iteration 890, lr = 0.001
+I0204 09:01:00.146206 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_900.caffemodel
+I0204 09:01:00.148493 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_900.solverstate
+I0204 09:01:00.149473 31970 solver.cpp:341] Iteration 900, Testing net (#0)
+I0204 09:01:04.402024 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:01:04.402091 31970 solver.cpp:409]     Test net output #1: loss = 0.70147 (* 1 = 0.70147 loss)
+I0204 09:01:05.300408 31970 solver.cpp:237] Iteration 900, loss = 0.692348
+I0204 09:01:05.300966 31970 solver.cpp:253]     Train net output #0: loss = 0.692348 (* 1 = 0.692348 loss)
+I0204 09:01:05.300978 31970 sgd_solver.cpp:106] Iteration 900, lr = 0.001
+I0204 09:01:14.033805 31970 solver.cpp:237] Iteration 910, loss = 0.711836
+I0204 09:01:14.033870 31970 solver.cpp:253]     Train net output #0: loss = 0.711836 (* 1 = 0.711836 loss)
+I0204 09:01:14.033881 31970 sgd_solver.cpp:106] Iteration 910, lr = 0.001
+I0204 09:01:22.822427 31970 solver.cpp:237] Iteration 920, loss = 0.709225
+I0204 09:01:22.822494 31970 solver.cpp:253]     Train net output #0: loss = 0.709225 (* 1 = 0.709225 loss)
+I0204 09:01:22.822505 31970 sgd_solver.cpp:106] Iteration 920, lr = 0.001
+I0204 09:01:31.574934 31970 solver.cpp:237] Iteration 930, loss = 0.689189
+I0204 09:01:31.574998 31970 solver.cpp:253]     Train net output #0: loss = 0.689189 (* 1 = 0.689189 loss)
+I0204 09:01:31.575011 31970 sgd_solver.cpp:106] Iteration 930, lr = 0.001
+I0204 09:01:40.343503 31970 solver.cpp:237] Iteration 940, loss = 0.733625
+I0204 09:01:40.344288 31970 solver.cpp:253]     Train net output #0: loss = 0.733625 (* 1 = 0.733625 loss)
+I0204 09:01:40.344302 31970 sgd_solver.cpp:106] Iteration 940, lr = 0.001
+I0204 09:01:49.098824 31970 solver.cpp:237] Iteration 950, loss = 0.701262
+I0204 09:01:49.098891 31970 solver.cpp:253]     Train net output #0: loss = 0.701262 (* 1 = 0.701262 loss)
+I0204 09:01:49.098903 31970 sgd_solver.cpp:106] Iteration 950, lr = 0.001
+I0204 09:01:57.886530 31970 solver.cpp:237] Iteration 960, loss = 0.714417
+I0204 09:01:57.886602 31970 solver.cpp:253]     Train net output #0: loss = 0.714417 (* 1 = 0.714417 loss)
+I0204 09:01:57.886615 31970 sgd_solver.cpp:106] Iteration 960, lr = 0.001
+I0204 09:02:06.677443 31970 solver.cpp:237] Iteration 970, loss = 0.737969
+I0204 09:02:06.677506 31970 solver.cpp:253]     Train net output #0: loss = 0.737969 (* 1 = 0.737969 loss)
+I0204 09:02:06.677518 31970 sgd_solver.cpp:106] Iteration 970, lr = 0.001
+I0204 09:02:15.435946 31970 solver.cpp:237] Iteration 980, loss = 0.698595
+I0204 09:02:15.436480 31970 solver.cpp:253]     Train net output #0: loss = 0.698595 (* 1 = 0.698595 loss)
+I0204 09:02:15.436493 31970 sgd_solver.cpp:106] Iteration 980, lr = 0.001
+I0204 09:02:24.286381 31970 solver.cpp:237] Iteration 990, loss = 0.683859
+I0204 09:02:24.286448 31970 solver.cpp:253]     Train net output #0: loss = 0.683859 (* 1 = 0.683859 loss)
+I0204 09:02:24.286460 31970 sgd_solver.cpp:106] Iteration 990, lr = 0.001
+I0204 09:02:32.389307 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1000.caffemodel
+I0204 09:02:32.391589 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1000.solverstate
+I0204 09:02:32.392549 31970 solver.cpp:341] Iteration 1000, Testing net (#0)
+I0204 09:02:36.918432 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:02:36.918489 31970 solver.cpp:409]     Test net output #1: loss = 0.693152 (* 1 = 0.693152 loss)
+I0204 09:02:37.864549 31970 solver.cpp:237] Iteration 1000, loss = 0.728641
+I0204 09:02:37.864609 31970 solver.cpp:253]     Train net output #0: loss = 0.728641 (* 1 = 0.728641 loss)
+I0204 09:02:37.864620 31970 sgd_solver.cpp:106] Iteration 1000, lr = 0.001
+I0204 09:02:46.642268 31970 solver.cpp:237] Iteration 1010, loss = 0.703391
+I0204 09:02:46.649025 31970 solver.cpp:253]     Train net output #0: loss = 0.703391 (* 1 = 0.703391 loss)
+I0204 09:02:46.649045 31970 sgd_solver.cpp:106] Iteration 1010, lr = 0.001
+I0204 09:02:55.519032 31970 solver.cpp:237] Iteration 1020, loss = 0.712428
+I0204 09:02:55.519093 31970 solver.cpp:253]     Train net output #0: loss = 0.712428 (* 1 = 0.712428 loss)
+I0204 09:02:55.519104 31970 sgd_solver.cpp:106] Iteration 1020, lr = 0.001
+I0204 09:03:04.179692 31970 solver.cpp:237] Iteration 1030, loss = 0.708453
+I0204 09:03:04.179744 31970 solver.cpp:253]     Train net output #0: loss = 0.708453 (* 1 = 0.708453 loss)
+I0204 09:03:04.179756 31970 sgd_solver.cpp:106] Iteration 1030, lr = 0.001
+I0204 09:03:12.933887 31970 solver.cpp:237] Iteration 1040, loss = 0.698362
+I0204 09:03:12.933944 31970 solver.cpp:253]     Train net output #0: loss = 0.698362 (* 1 = 0.698362 loss)
+I0204 09:03:12.933956 31970 sgd_solver.cpp:106] Iteration 1040, lr = 0.001
+I0204 09:03:21.730736 31970 solver.cpp:237] Iteration 1050, loss = 0.699025
+I0204 09:03:21.730895 31970 solver.cpp:253]     Train net output #0: loss = 0.699025 (* 1 = 0.699025 loss)
+I0204 09:03:21.730908 31970 sgd_solver.cpp:106] Iteration 1050, lr = 0.001
+I0204 09:03:30.355104 31970 solver.cpp:237] Iteration 1060, loss = 0.694868
+I0204 09:03:30.355160 31970 solver.cpp:253]     Train net output #0: loss = 0.694868 (* 1 = 0.694868 loss)
+I0204 09:03:30.355171 31970 sgd_solver.cpp:106] Iteration 1060, lr = 0.001
+I0204 09:03:38.951666 31970 solver.cpp:237] Iteration 1070, loss = 0.694514
+I0204 09:03:38.951722 31970 solver.cpp:253]     Train net output #0: loss = 0.694514 (* 1 = 0.694514 loss)
+I0204 09:03:38.951733 31970 sgd_solver.cpp:106] Iteration 1070, lr = 0.001
+I0204 09:03:47.536996 31970 solver.cpp:237] Iteration 1080, loss = 0.690024
+I0204 09:03:47.537053 31970 solver.cpp:253]     Train net output #0: loss = 0.690024 (* 1 = 0.690024 loss)
+I0204 09:03:47.537065 31970 sgd_solver.cpp:106] Iteration 1080, lr = 0.001
+I0204 09:03:56.326858 31970 solver.cpp:237] Iteration 1090, loss = 0.690748
+I0204 09:03:56.327023 31970 solver.cpp:253]     Train net output #0: loss = 0.690748 (* 1 = 0.690748 loss)
+I0204 09:03:56.327039 31970 sgd_solver.cpp:106] Iteration 1090, lr = 0.001
+I0204 09:04:04.383872 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1100.caffemodel
+I0204 09:04:04.386108 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1100.solverstate
+I0204 09:04:04.387147 31970 solver.cpp:341] Iteration 1100, Testing net (#0)
+I0204 09:04:08.638696 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:04:08.638758 31970 solver.cpp:409]     Test net output #1: loss = 0.696558 (* 1 = 0.696558 loss)
+I0204 09:04:09.531743 31970 solver.cpp:237] Iteration 1100, loss = 0.733039
+I0204 09:04:09.531788 31970 solver.cpp:253]     Train net output #0: loss = 0.733039 (* 1 = 0.733039 loss)
+I0204 09:04:09.531800 31970 sgd_solver.cpp:106] Iteration 1100, lr = 0.001
+I0204 09:04:18.378438 31970 solver.cpp:237] Iteration 1110, loss = 0.713962
+I0204 09:04:18.378489 31970 solver.cpp:253]     Train net output #0: loss = 0.713962 (* 1 = 0.713962 loss)
+I0204 09:04:18.378500 31970 sgd_solver.cpp:106] Iteration 1110, lr = 0.001
+I0204 09:04:27.342715 31970 solver.cpp:237] Iteration 1120, loss = 0.70972
+I0204 09:04:27.342885 31970 solver.cpp:253]     Train net output #0: loss = 0.70972 (* 1 = 0.70972 loss)
+I0204 09:04:27.342897 31970 sgd_solver.cpp:106] Iteration 1120, lr = 0.001
+I0204 09:04:36.079985 31970 solver.cpp:237] Iteration 1130, loss = 0.716252
+I0204 09:04:36.080054 31970 solver.cpp:253]     Train net output #0: loss = 0.716252 (* 1 = 0.716252 loss)
+I0204 09:04:36.080065 31970 sgd_solver.cpp:106] Iteration 1130, lr = 0.001
+I0204 09:04:44.649111 31970 solver.cpp:237] Iteration 1140, loss = 0.690135
+I0204 09:04:44.649175 31970 solver.cpp:253]     Train net output #0: loss = 0.690135 (* 1 = 0.690135 loss)
+I0204 09:04:44.649188 31970 sgd_solver.cpp:106] Iteration 1140, lr = 0.001
+I0204 09:04:53.523286 31970 solver.cpp:237] Iteration 1150, loss = 0.689281
+I0204 09:04:53.523355 31970 solver.cpp:253]     Train net output #0: loss = 0.689281 (* 1 = 0.689281 loss)
+I0204 09:04:53.523367 31970 sgd_solver.cpp:106] Iteration 1150, lr = 0.001
+I0204 09:05:02.366376 31970 solver.cpp:237] Iteration 1160, loss = 0.702967
+I0204 09:05:02.366551 31970 solver.cpp:253]     Train net output #0: loss = 0.702967 (* 1 = 0.702967 loss)
+I0204 09:05:02.366565 31970 sgd_solver.cpp:106] Iteration 1160, lr = 0.001
+I0204 09:05:11.239897 31970 solver.cpp:237] Iteration 1170, loss = 0.715265
+I0204 09:05:11.239967 31970 solver.cpp:253]     Train net output #0: loss = 0.715265 (* 1 = 0.715265 loss)
+I0204 09:05:11.239980 31970 sgd_solver.cpp:106] Iteration 1170, lr = 0.001
+I0204 09:05:20.011243 31970 solver.cpp:237] Iteration 1180, loss = 0.714415
+I0204 09:05:20.011312 31970 solver.cpp:253]     Train net output #0: loss = 0.714415 (* 1 = 0.714415 loss)
+I0204 09:05:20.011322 31970 sgd_solver.cpp:106] Iteration 1180, lr = 0.001
+I0204 09:05:28.730679 31970 solver.cpp:237] Iteration 1190, loss = 0.696896
+I0204 09:05:28.730743 31970 solver.cpp:253]     Train net output #0: loss = 0.696896 (* 1 = 0.696896 loss)
+I0204 09:05:28.730756 31970 sgd_solver.cpp:106] Iteration 1190, lr = 0.001
+I0204 09:05:36.646108 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1200.caffemodel
+I0204 09:05:36.648520 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1200.solverstate
+I0204 09:05:36.649500 31970 solver.cpp:341] Iteration 1200, Testing net (#0)
+I0204 09:05:40.933217 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:05:40.933287 31970 solver.cpp:409]     Test net output #1: loss = 0.693486 (* 1 = 0.693486 loss)
+I0204 09:05:41.820318 31970 solver.cpp:237] Iteration 1200, loss = 0.699655
+I0204 09:05:41.820379 31970 solver.cpp:253]     Train net output #0: loss = 0.699655 (* 1 = 0.699655 loss)
+I0204 09:05:41.820390 31970 sgd_solver.cpp:106] Iteration 1200, lr = 0.001
+I0204 09:05:50.681893 31970 solver.cpp:237] Iteration 1210, loss = 0.706719
+I0204 09:05:50.681962 31970 solver.cpp:253]     Train net output #0: loss = 0.706719 (* 1 = 0.706719 loss)
+I0204 09:05:50.681974 31970 sgd_solver.cpp:106] Iteration 1210, lr = 0.001
+I0204 09:05:59.435082 31970 solver.cpp:237] Iteration 1220, loss = 0.682871
+I0204 09:05:59.435149 31970 solver.cpp:253]     Train net output #0: loss = 0.682871 (* 1 = 0.682871 loss)
+I0204 09:05:59.435163 31970 sgd_solver.cpp:106] Iteration 1220, lr = 0.001
+I0204 09:06:08.198555 31970 solver.cpp:237] Iteration 1230, loss = 0.707019
+I0204 09:06:08.198740 31970 solver.cpp:253]     Train net output #0: loss = 0.707019 (* 1 = 0.707019 loss)
+I0204 09:06:08.198755 31970 sgd_solver.cpp:106] Iteration 1230, lr = 0.001
+I0204 09:06:16.980276 31970 solver.cpp:237] Iteration 1240, loss = 0.708149
+I0204 09:06:16.980340 31970 solver.cpp:253]     Train net output #0: loss = 0.708149 (* 1 = 0.708149 loss)
+I0204 09:06:16.980353 31970 sgd_solver.cpp:106] Iteration 1240, lr = 0.001
+I0204 09:06:25.731629 31970 solver.cpp:237] Iteration 1250, loss = 0.693192
+I0204 09:06:25.731690 31970 solver.cpp:253]     Train net output #0: loss = 0.693192 (* 1 = 0.693192 loss)
+I0204 09:06:25.731703 31970 sgd_solver.cpp:106] Iteration 1250, lr = 0.001
+I0204 09:06:34.476882 31970 solver.cpp:237] Iteration 1260, loss = 0.708874
+I0204 09:06:34.476950 31970 solver.cpp:253]     Train net output #0: loss = 0.708874 (* 1 = 0.708874 loss)
+I0204 09:06:34.476964 31970 sgd_solver.cpp:106] Iteration 1260, lr = 0.001
+I0204 09:06:43.227819 31970 solver.cpp:237] Iteration 1270, loss = 0.712726
+I0204 09:06:43.228018 31970 solver.cpp:253]     Train net output #0: loss = 0.712726 (* 1 = 0.712726 loss)
+I0204 09:06:43.228031 31970 sgd_solver.cpp:106] Iteration 1270, lr = 0.001
+I0204 09:06:52.077615 31970 solver.cpp:237] Iteration 1280, loss = 0.684196
+I0204 09:06:52.077702 31970 solver.cpp:253]     Train net output #0: loss = 0.684196 (* 1 = 0.684196 loss)
+I0204 09:06:52.077714 31970 sgd_solver.cpp:106] Iteration 1280, lr = 0.001
+I0204 09:07:00.870424 31970 solver.cpp:237] Iteration 1290, loss = 0.729828
+I0204 09:07:00.870488 31970 solver.cpp:253]     Train net output #0: loss = 0.729828 (* 1 = 0.729828 loss)
+I0204 09:07:00.870502 31970 sgd_solver.cpp:106] Iteration 1290, lr = 0.001
+I0204 09:07:08.733034 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1300.caffemodel
+I0204 09:07:08.735316 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1300.solverstate
+I0204 09:07:08.736256 31970 solver.cpp:341] Iteration 1300, Testing net (#0)
+I0204 09:07:13.038651 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:07:13.038734 31970 solver.cpp:409]     Test net output #1: loss = 0.696604 (* 1 = 0.696604 loss)
+I0204 09:07:13.951182 31970 solver.cpp:237] Iteration 1300, loss = 0.689441
+I0204 09:07:13.951392 31970 solver.cpp:253]     Train net output #0: loss = 0.689441 (* 1 = 0.689441 loss)
+I0204 09:07:13.951406 31970 sgd_solver.cpp:106] Iteration 1300, lr = 0.001
+I0204 09:07:22.697338 31970 solver.cpp:237] Iteration 1310, loss = 0.700055
+I0204 09:07:22.697407 31970 solver.cpp:253]     Train net output #0: loss = 0.700055 (* 1 = 0.700055 loss)
+I0204 09:07:22.697419 31970 sgd_solver.cpp:106] Iteration 1310, lr = 0.001
+I0204 09:07:31.270594 31970 solver.cpp:237] Iteration 1320, loss = 0.702727
+I0204 09:07:31.270663 31970 solver.cpp:253]     Train net output #0: loss = 0.702727 (* 1 = 0.702727 loss)
+I0204 09:07:31.270675 31970 sgd_solver.cpp:106] Iteration 1320, lr = 0.001
+I0204 09:07:40.251415 31970 solver.cpp:237] Iteration 1330, loss = 0.699184
+I0204 09:07:40.251479 31970 solver.cpp:253]     Train net output #0: loss = 0.699184 (* 1 = 0.699184 loss)
+I0204 09:07:40.251490 31970 sgd_solver.cpp:106] Iteration 1330, lr = 0.001
+I0204 09:07:49.108842 31970 solver.cpp:237] Iteration 1340, loss = 0.736055
+I0204 09:07:49.109019 31970 solver.cpp:253]     Train net output #0: loss = 0.736055 (* 1 = 0.736055 loss)
+I0204 09:07:49.109032 31970 sgd_solver.cpp:106] Iteration 1340, lr = 0.001
+I0204 09:07:57.886729 31970 solver.cpp:237] Iteration 1350, loss = 0.697754
+I0204 09:07:57.886796 31970 solver.cpp:253]     Train net output #0: loss = 0.697754 (* 1 = 0.697754 loss)
+I0204 09:07:57.886808 31970 sgd_solver.cpp:106] Iteration 1350, lr = 0.001
+I0204 09:08:06.474988 31970 solver.cpp:237] Iteration 1360, loss = 0.686149
+I0204 09:08:06.475054 31970 solver.cpp:253]     Train net output #0: loss = 0.686149 (* 1 = 0.686149 loss)
+I0204 09:08:06.475066 31970 sgd_solver.cpp:106] Iteration 1360, lr = 0.001
+I0204 09:08:15.070627 31970 solver.cpp:237] Iteration 1370, loss = 0.7264
+I0204 09:08:15.070695 31970 solver.cpp:253]     Train net output #0: loss = 0.7264 (* 1 = 0.7264 loss)
+I0204 09:08:15.070708 31970 sgd_solver.cpp:106] Iteration 1370, lr = 0.001
+I0204 09:08:23.611799 31970 solver.cpp:237] Iteration 1380, loss = 0.680492
+I0204 09:08:23.612004 31970 solver.cpp:253]     Train net output #0: loss = 0.680492 (* 1 = 0.680492 loss)
+I0204 09:08:23.612020 31970 sgd_solver.cpp:106] Iteration 1380, lr = 0.001
+I0204 09:08:32.256723 31970 solver.cpp:237] Iteration 1390, loss = 0.687852
+I0204 09:08:32.256789 31970 solver.cpp:253]     Train net output #0: loss = 0.687852 (* 1 = 0.687852 loss)
+I0204 09:08:32.256801 31970 sgd_solver.cpp:106] Iteration 1390, lr = 0.001
+I0204 09:08:40.194883 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1400.caffemodel
+I0204 09:08:40.197170 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1400.solverstate
+I0204 09:08:40.198108 31970 solver.cpp:341] Iteration 1400, Testing net (#0)
+I0204 09:08:44.274255 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:08:44.274313 31970 solver.cpp:409]     Test net output #1: loss = 0.693401 (* 1 = 0.693401 loss)
+I0204 09:08:45.132346 31970 solver.cpp:237] Iteration 1400, loss = 0.697109
+I0204 09:08:45.132402 31970 solver.cpp:253]     Train net output #0: loss = 0.697109 (* 1 = 0.697109 loss)
+I0204 09:08:45.132414 31970 sgd_solver.cpp:106] Iteration 1400, lr = 0.001
+I0204 09:08:53.723230 31970 solver.cpp:237] Iteration 1410, loss = 0.69854
+I0204 09:08:53.723449 31970 solver.cpp:253]     Train net output #0: loss = 0.69854 (* 1 = 0.69854 loss)
+I0204 09:08:53.723464 31970 sgd_solver.cpp:106] Iteration 1410, lr = 0.001
+I0204 09:09:02.319733 31970 solver.cpp:237] Iteration 1420, loss = 0.711613
+I0204 09:09:02.319805 31970 solver.cpp:253]     Train net output #0: loss = 0.711613 (* 1 = 0.711613 loss)
+I0204 09:09:02.319818 31970 sgd_solver.cpp:106] Iteration 1420, lr = 0.001
+I0204 09:09:11.078007 31970 solver.cpp:237] Iteration 1430, loss = 0.701588
+I0204 09:09:11.078081 31970 solver.cpp:253]     Train net output #0: loss = 0.701588 (* 1 = 0.701588 loss)
+I0204 09:09:11.078094 31970 sgd_solver.cpp:106] Iteration 1430, lr = 0.001
+I0204 09:09:20.042968 31970 solver.cpp:237] Iteration 1440, loss = 0.695704
+I0204 09:09:20.043041 31970 solver.cpp:253]     Train net output #0: loss = 0.695704 (* 1 = 0.695704 loss)
+I0204 09:09:20.043059 31970 sgd_solver.cpp:106] Iteration 1440, lr = 0.001
+I0204 09:09:28.861820 31970 solver.cpp:237] Iteration 1450, loss = 0.731206
+I0204 09:09:28.870246 31970 solver.cpp:253]     Train net output #0: loss = 0.731206 (* 1 = 0.731206 loss)
+I0204 09:09:28.870280 31970 sgd_solver.cpp:106] Iteration 1450, lr = 0.001
+I0204 09:09:37.604575 31970 solver.cpp:237] Iteration 1460, loss = 0.695727
+I0204 09:09:37.604645 31970 solver.cpp:253]     Train net output #0: loss = 0.695727 (* 1 = 0.695727 loss)
+I0204 09:09:37.604657 31970 sgd_solver.cpp:106] Iteration 1460, lr = 0.001
+I0204 09:09:46.517050 31970 solver.cpp:237] Iteration 1470, loss = 0.692487
+I0204 09:09:46.517108 31970 solver.cpp:253]     Train net output #0: loss = 0.692487 (* 1 = 0.692487 loss)
+I0204 09:09:46.517120 31970 sgd_solver.cpp:106] Iteration 1470, lr = 0.001
+I0204 09:09:55.393354 31970 solver.cpp:237] Iteration 1480, loss = 0.709134
+I0204 09:09:55.393409 31970 solver.cpp:253]     Train net output #0: loss = 0.709134 (* 1 = 0.709134 loss)
+I0204 09:09:55.393421 31970 sgd_solver.cpp:106] Iteration 1480, lr = 0.001
+I0204 09:10:04.422093 31970 solver.cpp:237] Iteration 1490, loss = 0.700086
+I0204 09:10:04.422266 31970 solver.cpp:253]     Train net output #0: loss = 0.700086 (* 1 = 0.700086 loss)
+I0204 09:10:04.422278 31970 sgd_solver.cpp:106] Iteration 1490, lr = 0.001
+I0204 09:10:12.292572 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1500.caffemodel
+I0204 09:10:12.294833 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1500.solverstate
+I0204 09:10:12.295824 31970 solver.cpp:341] Iteration 1500, Testing net (#0)
+I0204 09:10:16.598526 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:10:16.598583 31970 solver.cpp:409]     Test net output #1: loss = 0.695187 (* 1 = 0.695187 loss)
+I0204 09:10:17.479001 31970 solver.cpp:237] Iteration 1500, loss = 0.723529
+I0204 09:10:17.479056 31970 solver.cpp:253]     Train net output #0: loss = 0.723529 (* 1 = 0.723529 loss)
+I0204 09:10:17.479068 31970 sgd_solver.cpp:106] Iteration 1500, lr = 0.001
+I0204 09:10:26.366641 31970 solver.cpp:237] Iteration 1510, loss = 0.700953
+I0204 09:10:26.366700 31970 solver.cpp:253]     Train net output #0: loss = 0.700953 (* 1 = 0.700953 loss)
+I0204 09:10:26.366711 31970 sgd_solver.cpp:106] Iteration 1510, lr = 0.001
+I0204 09:10:35.281518 31970 solver.cpp:237] Iteration 1520, loss = 0.698039
+I0204 09:10:35.281725 31970 solver.cpp:253]     Train net output #0: loss = 0.698039 (* 1 = 0.698039 loss)
+I0204 09:10:35.281738 31970 sgd_solver.cpp:106] Iteration 1520, lr = 0.001
+I0204 09:10:44.224910 31970 solver.cpp:237] Iteration 1530, loss = 0.714179
+I0204 09:10:44.224978 31970 solver.cpp:253]     Train net output #0: loss = 0.714179 (* 1 = 0.714179 loss)
+I0204 09:10:44.224989 31970 sgd_solver.cpp:106] Iteration 1530, lr = 0.001
+I0204 09:10:53.080759 31970 solver.cpp:237] Iteration 1540, loss = 0.68899
+I0204 09:10:53.080813 31970 solver.cpp:253]     Train net output #0: loss = 0.68899 (* 1 = 0.68899 loss)
+I0204 09:10:53.080824 31970 sgd_solver.cpp:106] Iteration 1540, lr = 0.001
+I0204 09:11:02.156983 31970 solver.cpp:237] Iteration 1550, loss = 0.689931
+I0204 09:11:02.157044 31970 solver.cpp:253]     Train net output #0: loss = 0.689931 (* 1 = 0.689931 loss)
+I0204 09:11:02.157058 31970 sgd_solver.cpp:106] Iteration 1550, lr = 0.001
+I0204 09:11:11.090507 31970 solver.cpp:237] Iteration 1560, loss = 0.706022
+I0204 09:11:11.090703 31970 solver.cpp:253]     Train net output #0: loss = 0.706022 (* 1 = 0.706022 loss)
+I0204 09:11:11.090716 31970 sgd_solver.cpp:106] Iteration 1560, lr = 0.001
+I0204 09:11:19.774003 31970 solver.cpp:237] Iteration 1570, loss = 0.691468
+I0204 09:11:19.774072 31970 solver.cpp:253]     Train net output #0: loss = 0.691468 (* 1 = 0.691468 loss)
+I0204 09:11:19.774407 31970 sgd_solver.cpp:106] Iteration 1570, lr = 0.001
+I0204 09:11:28.594460 31970 solver.cpp:237] Iteration 1580, loss = 0.718545
+I0204 09:11:28.594527 31970 solver.cpp:253]     Train net output #0: loss = 0.718545 (* 1 = 0.718545 loss)
+I0204 09:11:28.594539 31970 sgd_solver.cpp:106] Iteration 1580, lr = 0.001
+I0204 09:11:37.345965 31970 solver.cpp:237] Iteration 1590, loss = 0.718725
+I0204 09:11:37.346029 31970 solver.cpp:253]     Train net output #0: loss = 0.718725 (* 1 = 0.718725 loss)
+I0204 09:11:37.346040 31970 sgd_solver.cpp:106] Iteration 1590, lr = 0.001
+I0204 09:11:45.214490 31970 solver.cpp:459] Snapshotting to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1600.caffemodel
+I0204 09:11:45.217064 31970 sgd_solver.cpp:269] Snapshotting solver state to binary proto file /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num16_conv2num8_conv3num8_conv4num8_conv5num8/snaps/snap__iter_1600.solverstate
+I0204 09:11:45.644661 31970 solver.cpp:321] Iteration 1600, loss = 0.69217
+I0204 09:11:45.644714 31970 solver.cpp:341] Iteration 1600, Testing net (#0)
+I0204 09:11:49.786541 31970 solver.cpp:409]     Test net output #0: accuracy = 0.5
+I0204 09:11:49.786602 31970 solver.cpp:409]     Test net output #1: loss = 0.694651 (* 1 = 0.694651 loss)
+I0204 09:11:49.786612 31970 solver.cpp:326] Optimization Done.
+I0204 09:11:49.786617 31970 caffe.cpp:215] Optimization Done.

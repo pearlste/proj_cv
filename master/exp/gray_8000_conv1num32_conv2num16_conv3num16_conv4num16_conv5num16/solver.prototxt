@@ -1,0 +1,15 @@
+random_seed: 0
+test_iter: 10
+test_interval: 100
+base_lr: 0.001
+lr_policy: "step"
+gamma: 0.1
+stepsize: 100000
+display: 10
+max_iter: 1600
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 100
+solver_mode: CPU
+net: "/home/pearlstl/proj_cv/master/exp/gray_8000_conv1num32_conv2num16_conv3num16_conv4num16_conv5num16/train_val.prototxt"
+snapshot_prefix: "/home/pearlstl/proj_cv/master/exp/gray_8000_conv1num32_conv2num16_conv3num16_conv4num16_conv5num16/snaps/snap_"
