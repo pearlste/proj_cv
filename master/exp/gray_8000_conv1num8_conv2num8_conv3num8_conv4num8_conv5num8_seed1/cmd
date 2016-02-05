@@ -1,0 +1,1 @@
+$CAFFE_ROOT/build/tools/caffe train -log_dir /home/pearlstl/proj_cv/master/exp/gray_8000_conv1num8_conv2num8_conv3num8_conv4num8_conv5num8_seed1 --solver=/home/pearlstl/proj_cv/master/exp/gray_8000_conv1num8_conv2num8_conv3num8_conv4num8_conv5num8_seed1/solver.prototxt >& stdout_log &
