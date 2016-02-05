@@ -1,11 +1,11 @@
 #!/bin/tcsh
 
-# Usage cstat [n]
+# Usage cstat <pattern> [n]
 # n defaults to 3
 
-if ( $#argv > 1 ) then
+if ( $#argv > 2 || $#argv == 0 ) then
     echo
-    echo "Usage: cstat [n]"
+    echo "Usage: cstat <pattern> [n]"
     echo "       n defaults to 3"
     echo
     exit
@@ -13,12 +13,21 @@ endif
 
 set n = "3"
 
-if ( $#argv == 1 ) then
-    set n = $1    
+if ( $#argv == 2 ) then
+    set n = $2    
 endif
 
-foreach the_file ( `find ${COLOMBE_ROOT}/exp -name stdout_log | sort` )
-echo
-echo $the_file
-grep "accuracy =" $the_file | tail -${n}
+cd ${COLOMBE_ROOT}/exp
+
+foreach the_dir ( $1 )
+    echo
+    echo $the_dir
+    grep "accuracy =" ${the_dir}/stdout_log | tail -${n}
 end
+
+foreach the_dir ( $1 )
+    echo
+    echo $the_dir
+    grep "Iteration.*loss =" ${the_dir}/stdout_log | tail -${n}
+end
+

@@ -1,8 +1,8 @@
-#define SX_DATA_TRAIN_MEAN_FILENAME "/home/pearlstl/proj_cv/master/lmdb/grass_weed_db1/mean_file.binaryproto"
-#define SX_DATA_TRAIN_LMDB_NAME     "/home/pearlstl/proj_cv/master/lmdb/grass_weed_db1"
+#define SX_DATA_TRAIN_MEAN_FILENAME "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db/mean_file.binaryproto"
+#define SX_DATA_TRAIN_LMDB_NAME     "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db"
 #define SX_DATA_BATCH_SIZE          100
-#define SX_DATA_TEST_MEAN_FILENAME  "/home/pearlstl/proj_cv/master/lmdb/grass_weed_test_db1/mean_file.binaryproto"
-#define SX_DATA_TEST_LMDB_NAME      "/home/pearlstl/proj_cv/master/lmdb/grass_weed_test_db1"
+#define SX_DATA_TEST_MEAN_FILENAME  "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db/mean_file.binaryproto"
+#define SX_DATA_TEST_LMDB_NAME      "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db"
 #define SX_DATA_BATCH_SIZE          100
 #define SX_CONV1_NUM_OUT            64
 #define SX_CONV1_KER_SZ             11
