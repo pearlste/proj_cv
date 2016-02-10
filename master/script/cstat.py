@@ -55,7 +55,8 @@ else:
     the_cwd = os.environ['COLOMBE_ROOT'] + '/exp'
     os.chdir(the_cwd)
     file_list = os.listdir('.')
-
+    file_list.sort()
+    
     if do_acc:
         for the_dir in file_list:
             m = re.search( pattern, the_dir )
