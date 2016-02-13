@@ -11,7 +11,7 @@ def Usage():
 Usage: log2csv.py -h
        log2csv.py --help
        log2csv.py <csv_filename>
-       log2csv.py <pattern>  <csv_filename>
+       log2csv.py <pattern> [-l] <csv_filename>
            pattern = regular expression, default is ".*"
 
        With no arguments all defaults are used.
@@ -22,10 +22,13 @@ Usage: log2csv.py -h
 # Get the total number of args passed
 params_total    = len(sys.argv)
 
-if params_total < 2 or params_total > 3:
+if params_total < 2 or params_total > 4:
     Usage()
 
 else:
+    do_loss     = 0
+    do_accuracy = 1
+
     if sys.argv[1] == '-h' or sys.argv[1] == '--help':
         Usage()
 
@@ -33,10 +36,25 @@ else:
         
     if params_total == 2:
         csv_filename    = sys.argv[1]
-    else:
+    elif params_total == 3:
         pattern         = sys.argv[1]
-        csv_filename    = sys.argv[2]
-        
+        if sys.argv[2] != '-l':
+            csv_filename    = sys.argv[2]
+        else:
+            do_loss     = 1
+            do_accuracy = 0
+    elif sys.argv[2] != '-l':
+        Usage()
+    else:
+        do_loss     = 1
+        do_accuracy = 0
+        pattern         = sys.argv[1]
+        csv_filename    = sys.argv[3]
+            
+    orig_cwd = os.getcwd()
+    if csv_filename[0] != '/': 
+        csv_filename = orig_cwd + '/' + csv_filename
+
     the_cwd = os.environ['COLOMBE_ROOT'] + '/exp'
     os.chdir(the_cwd)
     file_list = os.listdir('.')
@@ -45,17 +63,24 @@ else:
     file_idx        = 0
     prev_line_cnt   = -1    
 
+    flt_re = r'([e\-0-9\.]+)'
+    if do_loss:
+        flt_str = "Train net output.*loss = %s " % flt_re
+    else:
+        flt_str = "Test.*accuracy = %s" % flt_re
+    
     for the_dir in file_list:
         m = re.search( pattern, the_dir )
         
         if m:
             # Get line count of lines matching pattern
             # Add to line_cnt
-            wc = subprocess.check_output( [r'grep -P "Train\ net\ output.*loss\ =\ ([e\-0-9\.]+)\s" ' + the_dir + '/stdout_log | wc'], shell=True)
+            sys_cmd = 'grep -P "%s" %s/stdout_log | wc' % (flt_str, the_dir)
+#            print 'sys_cmd=%s' % sys_cmd
+            wc = subprocess.check_output( [sys_cmd], shell=True)
             m = re.search( "^\s*([e\-0-9\.]+)\s", wc )
 
             line_cnt = int(m.group(1))
-
             if prev_line_cnt != -1:
                 if line_cnt != prev_line_cnt:
                     print "Error: line_cnt=%d, prev_line_cnt=%d" % (line_cnt, prev_line_cnt)
@@ -83,8 +108,7 @@ else:
                 if x == "":
                     break
                 
-                m = re.search( "Train\ net\ output.*loss\ =\ ([e\-0-9\.]+)\s", x )
-                
+                m = re.search( flt_str, x )
                 if m:
                     the_val = float(m.group(1))
                     the_loss_arr[row_idx][file_idx] = the_val
@@ -95,6 +119,7 @@ else:
             fd_src.close()
 
     fd_csv = open( csv_filename + ".csv" , "w" )
+#    print "trace: fd_csv %s" % csv_filename 
     for idx in range(file_idx):
         if idx != file_idx - 1:
             fd_csv.write( "%s," % the_dir_arr[idx] )
@@ -110,7 +135,8 @@ else:
             fd_csv.write( "%f," % the_loss_arr[mi] )
         it.iternext()
     fd_csv.close()
-
+#    print "trace: fd_csv close"
+    
     fd_gpt = open( csv_filename + ".gpt" , "w" )
     fd_gpt.write( r'set datafile separator ","' )
     fd_gpt.write( "\n" )
