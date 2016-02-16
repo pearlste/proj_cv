@@ -6,3 +6,5 @@
 *.ps
 *.csv
 *.bak
+*.orig
+*~

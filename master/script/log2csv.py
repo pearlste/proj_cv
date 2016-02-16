@@ -35,6 +35,8 @@ else:
     do_loss     = 0
     do_accuracy = 1
 
+    colombe_root = os.environ['COLOMBE_ROOT']
+            
     if sys.argv[1] == '-h' or sys.argv[1] == '--help':
         Usage()
 
@@ -57,11 +59,7 @@ else:
         pattern         = sys.argv[1]
         csv_filename    = sys.argv[3]
             
-    orig_cwd = os.getcwd()
-    if csv_filename[0] != '/': 
-        csv_filename = orig_cwd + '/' + csv_filename
-
-    the_cwd = os.environ['COLOMBE_ROOT'] + '/exp'
+    the_cwd = colombe_root + '/exp'
     os.chdir(the_cwd)
     file_list = os.listdir('.')
     file_list.sort()
@@ -135,12 +133,12 @@ else:
                     the_test_arr[test_row_idx][file_idx]['f0'] = iteration
                     the_test_arr[test_row_idx][file_idx]['f1'] = the_val
                     test_row_idx = test_row_idx + 1
-                    print "%d %d\n" % (iteration, test_row_idx)
+#                    print "%d %d\n" % (iteration, test_row_idx)
             
             file_idx = file_idx + 1    
             fd_src.close()
 
-    fd_csv = open( csv_filename + "_train.csv" , "w" )
+    fd_csv = open( "../plots/" + csv_filename + "_train.csv" , "w" )
     for idx in range(file_idx):
         if idx != file_idx - 1:
             fd_csv.write( "%s," % the_dir_arr[idx] )
@@ -160,7 +158,7 @@ else:
 
     tmp = the_test_arr[0:test_row_idx]
     the_test_arr = tmp
-    fd_csv = open( csv_filename + "_test.csv" , "w" )
+    fd_csv = open( "../plots/" + csv_filename + "_test.csv" , "w" )
     for idx in range(file_idx):
         if idx != file_idx - 1:
             fd_csv.write( "%s," % the_dir_arr[idx] )
@@ -177,28 +175,28 @@ else:
         it.iternext()
     fd_csv.close()
     
-    fd_gpt = open( csv_filename + ".gpt" , "w" )
+    fd_gpt = open( "../plots/" + csv_filename + ".gpt" , "w" )
 
     if do_loss:
         fd_gpt.write( 'set title "Loss vs. Training Iteration (Log Scale)" font ",14"\n' )
         fd_gpt.write( 'set logscale y\n' )
     else:
         fd_gpt.write( 'set title "Accuracy vs. Training Iteration" font ",14"\n' )
-        
+
     fd_gpt.write( r'set datafile separator ","' )
     fd_gpt.write( "\n" )
     for idx in range(file_idx):
         if idx == 0:
-            fd_gpt.write( r'  plot "%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            fd_gpt.write( r'  plot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
         else:
-            fd_gpt.write( r'replot "%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
-        fd_gpt.write( r'replot "%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            fd_gpt.write( r'replot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+        fd_gpt.write( r'replot "%s/plots/%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
 
     fd_gpt.write( 'set terminal postscript noenhanced\n' )
-    fd_gpt.write( 'set output "%s.ps"\n' % csv_filename )
+    fd_gpt.write( 'set output "../plots/%s.ps"\n' % csv_filename )
     fd_gpt.write( 'replot\n' )
 
     fd_gpt.close()
     
-    os.system( "gnuplot -persist %s.gpt" % csv_filename )
+    os.system( "gnuplot -persist  %s/plots/%s.gpt" % (colombe_root, csv_filename) )
     
