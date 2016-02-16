@@ -16,6 +16,12 @@ Usage: log2csv.py -h
 
        With no arguments all defaults are used.
        Pattern must be defined to use other arguments
+       
+       Creates files:
+         <csv_filename>_test.csv     -- comma separated values (Excel style), Test phase
+         <csv_filename>_train.csv    -- comma separated values (Excel style), Train phase
+         <csv_filename>.gpt          -- Gnuplot commands, run command:
+                                         gnuplot  <csv_filename>.gpt
 '''
     exit()
     
@@ -65,9 +71,11 @@ else:
 
     flt_re = r'([e\-0-9\.]+)'
     if do_loss:
-        flt_str = "Train net output.*loss = %s " % flt_re
+        test_flt_str    = "Test net output.*loss = %s " % flt_re
+        train_flt_str    = "Train net output.*loss = %s " % flt_re
     else:
-        flt_str = "Test.*accuracy = %s" % flt_re
+        test_flt_str    = "Test.*accuracy = %s" % flt_re
+        train_flt_str   = "Train.*accuracy = %s" % flt_re
     
     for the_dir in file_list:
         m = re.search( pattern, the_dir )
@@ -75,7 +83,7 @@ else:
         if m:
             # Get line count of lines matching pattern
             # Add to line_cnt
-            sys_cmd = 'grep -P "%s" %s/stdout_log | wc' % (flt_str, the_dir)
+            sys_cmd = 'grep -P "%s" %s/stdout_log | wc' % (train_flt_str, the_dir)
 #            print 'sys_cmd=%s' % sys_cmd
             wc = subprocess.check_output( [sys_cmd], shell=True)
             m = re.search( "^\s*([e\-0-9\.]+)\s", wc )
@@ -90,7 +98,8 @@ else:
             file_idx = file_idx + 1    
 #            print "%s: %d" % (the_dir, line_cnt)
     
-    the_loss_arr    = np.ndarray(shape=(prev_line_cnt, file_idx), dtype=float, order='C')
+    the_train_arr   = np.ndarray(shape=(prev_line_cnt, file_idx), dtype="i4,f8", order='C')
+    the_test_arr    = np.ndarray(shape=(prev_line_cnt, file_idx), dtype="i4,f8", order='C')
     the_dir_arr     = []
     file_idx        = 0
     
@@ -101,51 +110,82 @@ else:
             the_dir_arr.append( the_dir )
             fd_src = open( "%s/stdout_log" % the_dir, "r" )
             
-            row_idx = 0
+            train_row_idx = 0
+            test_row_idx  = 0
             
             while ( 1 ):
                 x = fd_src.readline()
                 if x == "":
                     break
                 
-                m = re.search( flt_str, x )
+                m = re.search( "Iteration ([0-9]+)", x )
+                if m:
+                    iteration = float(m.group(1))
+            
+                m = re.search( train_flt_str, x )
                 if m:
                     the_val = float(m.group(1))
-                    the_loss_arr[row_idx][file_idx] = the_val
+                    the_train_arr[train_row_idx][file_idx]['f0'] = iteration
+                    the_train_arr[train_row_idx][file_idx]['f1'] = the_val
 #                    print "row = %d, col = %d, loss = %f" % (row_idx, file_idx, the_val)
-                    row_idx = row_idx + 1
+                    train_row_idx = train_row_idx + 1
+            
+                m = re.search( test_flt_str, x )
+                if m:
+                    the_val = float(m.group(1))
+                    the_test_arr[test_row_idx][file_idx]['f0'] = iteration
+                    the_test_arr[test_row_idx][file_idx]['f1'] = the_val
+                    test_row_idx = test_row_idx + 1
             
             file_idx = file_idx + 1    
             fd_src.close()
 
-    fd_csv = open( csv_filename + ".csv" , "w" )
-#    print "trace: fd_csv %s" % csv_filename 
+    fd_csv = open( csv_filename + "_train.csv" , "w" )
     for idx in range(file_idx):
         if idx != file_idx - 1:
             fd_csv.write( "%s," % the_dir_arr[idx] )
         else:
             fd_csv.write( "%s\n" % the_dir_arr[idx] )
 
-    it = np.nditer(the_loss_arr, flags=['multi_index'])
+    it = np.nditer(the_train_arr, flags=['multi_index'])
     while not it.finished:
         mi = it.multi_index
         if mi[1] == file_idx - 1:
-            fd_csv.write( "%f\n" % the_loss_arr[mi] )
+            fd_csv.write( "%f,%i\n" % (the_train_arr[mi]['f1'], the_train_arr[mi]['f0']) )
         else:
-            fd_csv.write( "%f," % the_loss_arr[mi] )
+            fd_csv.write( "%f," % the_train_arr[mi]['f1'] )
         it.iternext()
     fd_csv.close()
-#    print "trace: fd_csv close"
+    
+
+    tmp = the_test_arr[0:test_row_idx-1]
+    the_test_arr = tmp
+    fd_csv = open( csv_filename + "_test.csv" , "w" )
+    for idx in range(file_idx):
+        if idx != file_idx - 1:
+            fd_csv.write( "%s," % the_dir_arr[idx] )
+        else:
+            fd_csv.write( "%s\n" % the_dir_arr[idx] )
+
+    it = np.nditer(the_test_arr, flags=['multi_index'])
+    while not it.finished:
+        mi = it.multi_index
+        if mi[1] == file_idx - 1:
+            fd_csv.write( "%f,%i\n" % (the_test_arr[mi]['f1'], the_test_arr[mi]['f0']) )
+        else:
+            fd_csv.write( "%f," % the_test_arr[mi]['f1'] )
+        it.iternext()
+    fd_csv.close()
     
     fd_gpt = open( csv_filename + ".gpt" , "w" )
     fd_gpt.write( r'set datafile separator ","' )
     fd_gpt.write( "\n" )
     for idx in range(file_idx):
         if idx == 0:
-            fd_gpt.write( r'  plot "%s.csv" every ::1 using 0:%d with linespoints title "%s"' % (csv_filename, idx+1, the_dir_arr[idx] ) )
+            fd_gpt.write( r'  plot "%s_train.csv" every ::1 using %d:%d with linespoints title "%s"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
         else:
-            fd_gpt.write( r'replot "%s.csv" every ::1 using 0:%d with linespoints title "%s"' % (csv_filename, idx+1, the_dir_arr[idx] ) )
-        fd_gpt.write( "\n" )
+            fd_gpt.write( r'replot "%s_train.csv" every ::1 using %d:%d with linespoints title "%s"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
+        fd_gpt.write( r'replot "%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
 
     fd_gpt.write( 'pause -1 "Hit any key to continue"' )
         
