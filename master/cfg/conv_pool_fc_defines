@@ -1,0 +1,13 @@
+#define SX_DATA_TRAIN_MEAN_FILENAME "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db/mean_file.binaryproto"    
+#define SX_DATA_TRAIN_LMDB_NAME     "/home/pearlstl/proj_cv/master/lmdb/synth1_train_lum_db"                          
+#define SX_DATA_BATCH_SIZE          100                                                                               
+#define SX_DATA_TEST_MEAN_FILENAME  "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db/mean_file.binaryproto"     
+#define SX_DATA_TEST_LMDB_NAME      "/home/pearlstl/proj_cv/master/lmdb/synth1_test_lum_db"                           
+#define SX_DATA_BATCH_SIZE          100                                                                               
+#define SX_CONV_NUM_OUT             8
+#define SX_CONV_KER_SZ              11
+#define SX_CONV_STRIDE              4
+#define SX_POOL_KER_SZ              3
+#define SX_POOL_STRIDE              2
+#define SX_DROP_RATIO               0.5
+#define SX_FC_NUM_OUT               2

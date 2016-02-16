@@ -1,0 +1,19 @@
+#!/bin/tcsh
+
+cd ${COLOMBE_ROOT}/exp
+
+set files = `find . -type f | grep -v snaps`
+
+foreach the_file ( $files )
+    git ls-files $the_file --error-unmatch > & /dev/null
+    if ( $status != "0" ) then
+    
+        set sys_cmd = "git add ${the_file}"
+        
+        echo -n "sys_cmd = "
+        echo $sys_cmd
+
+        $sys_cmd
+    endif
+end
+
