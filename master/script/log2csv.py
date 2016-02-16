@@ -121,7 +121,6 @@ else:
                 m = re.search( "Iteration ([0-9]+)", x )
                 if m:
                     iteration = float(m.group(1))
-            
                 m = re.search( train_flt_str, x )
                 if m:
                     the_val = float(m.group(1))
@@ -136,6 +135,7 @@ else:
                     the_test_arr[test_row_idx][file_idx]['f0'] = iteration
                     the_test_arr[test_row_idx][file_idx]['f1'] = the_val
                     test_row_idx = test_row_idx + 1
+                    print "%d %d\n" % (iteration, test_row_idx)
             
             file_idx = file_idx + 1    
             fd_src.close()
@@ -158,7 +158,7 @@ else:
     fd_csv.close()
     
 
-    tmp = the_test_arr[0:test_row_idx-1]
+    tmp = the_test_arr[0:test_row_idx]
     the_test_arr = tmp
     fd_csv = open( csv_filename + "_test.csv" , "w" )
     for idx in range(file_idx):
@@ -178,19 +178,27 @@ else:
     fd_csv.close()
     
     fd_gpt = open( csv_filename + ".gpt" , "w" )
+
+    if do_loss:
+        fd_gpt.write( 'set title "Loss vs. Training Iteration (Log Scale)" font ",14"\n' )
+        fd_gpt.write( 'set logscale y\n' )
+    else:
+        fd_gpt.write( 'set title "Accuracy vs. Training Iteration" font ",14"\n' )
+        
     fd_gpt.write( r'set datafile separator ","' )
     fd_gpt.write( "\n" )
     for idx in range(file_idx):
         if idx == 0:
-            fd_gpt.write( r'  plot "%s_train.csv" every ::1 using %d:%d with linespoints title "%s"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
+            fd_gpt.write( r'  plot "%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
         else:
-            fd_gpt.write( r'replot "%s_train.csv" every ::1 using %d:%d with linespoints title "%s"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
-        fd_gpt.write( r'replot "%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst"%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], "\n" ) )
+            fd_gpt.write( r'replot "%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+        fd_gpt.write( r'replot "%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst" lc %d%s' % (csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
 
-    fd_gpt.write( 'pause -1 "Hit any key to continue"' )
-        
-#    fd_gpt.write( 'set terminal postscript eps enhanced\n' )
-#    fd_gpt.write( 'set output "%s.eps"\n' % csv_filename )
-#    fd_gpt.write( 'replot\n' )
+    fd_gpt.write( 'set terminal postscript noenhanced\n' )
+    fd_gpt.write( 'set output "%s.ps"\n' % csv_filename )
+    fd_gpt.write( 'replot\n' )
+
     fd_gpt.close()
+    
+    os.system( "gnuplot -persist %s.gpt" % csv_filename )
     
