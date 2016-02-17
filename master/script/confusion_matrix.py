@@ -1,22 +1,32 @@
-#!/usr/bin/python
+#!/usr/local/bin/python
 
 import sys
 
-sys.path.insert(0, '/usr/local/lib/python2.7/site-packages')
-sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/google/protobuf')
-sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/matplotlib')
-#sys.path.insert(0, '/usr/lib64')
+#sys.path.insert(0, '/usr/local/lib/python2.7/site-packages')
+#sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/google/protobuf')
+#sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/matplotlib')
+
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import pylab
 
-%matplotlib tk
-
+def Usage():
+    print '''
+Usage: confusion_matrix.py <expdir>
+                '''
+    exit()
+    
+if (len(sys.argv) != 2):
+    Usage()
+    
 # Make sure that caffe is on the python path:
 caffe_root = os.environ['CAFFE_ROOT']
 proj_root  = os.environ['COLOMBE_ROOT']
 
-exp = 'gray_8000_conv1num8_conv2num8_conv3num8_conv4num8_conv5num8'
+exp = sys.argv[1]
+exppath = proj_root + "/exp/" + exp
+os.chdir(exppath)
 
 sys.path.insert(0, caffe_root + '/python')
 
@@ -73,9 +83,10 @@ filters = net.params['conv1'][0].data
 filters = filters.squeeze()
 vis_square(filters.transpose(0, 2, 1))
 
-feat = net.blobs['conv1'].data[0, :36]
-vis_square(feat, padval=1)
-
-filters = net.params['conv2'][0].data
-vis_square(filters[:48].reshape(64*32, 5, 5))
+#feat = net.blobs['conv1'].data[0, :36]
+#vis_square(feat, padval=1)
+#
+#filters = net.params['conv2'][0].data
+#vis_square(filters[:48].reshape(64*32, 5, 5))
+pylab.show()
     
