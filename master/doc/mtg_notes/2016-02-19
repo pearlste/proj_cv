@@ -1,0 +1,17 @@
+w/Mun-Young
+
+Some possible investigations
+
+    * Run lots more simulations, in an attempt to:
+        1) Determine the minimum model order that allows for 100% accuracy on test data
+        2) Determine the probability density function for the convergence time, as a function of model order parameters.  For example we might define convergence time as the earliest time that the network achieved 98% or better test accuracy.
+    * Explore the effect of JPEG quantization on classification accuracy.  Current datasets are highly quantized.  Create two more datasets with identical source data with zero quantization error, and medium quantization error.  Explore the effects on convergence time and accuracy.
+    * Explore the effect of image whitening on classification.  The idea would be to normalize the FFT of the image data, then take the inverse transform.
+        Let tran_img = fft(img)
+            tran_img = tran_img/abs(tran_img)   // need special case to avoid divide by zero, or by extremely small numbers
+            img = ifft(tran_img)
+    * Explore deconv-nets to visualize trained model behavior    
+    * Use natural image data with grass and weeds, and explore whether training on synthetic data is useful
+    * Develop other synthetic image generators (like car traffic scenes), and test against natural imagery
+    * Investigate the use of the Linux 'batch' command to manage an execution queue
+    * Debug why test data is consistently better than train data!
