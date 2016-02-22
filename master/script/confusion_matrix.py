@@ -7,6 +7,7 @@ import sys
 #sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/matplotlib')
 
 import numpy as np
+import scipy.io
 import matplotlib.pyplot as plt
 import os
 import pylab
@@ -81,6 +82,9 @@ def vis_square(data, padsize=1, padval=0):
 # the parameters are a list of [weights, biases]
 filters = net.params['conv1'][0].data
 filters = filters.squeeze()
+
+scipy.io.savemat('%s/plots/plot.mat' % proj_root, mdict={'arr': filters})
+    
 vis_square(filters.transpose(0, 2, 1))
 
 #feat = net.blobs['conv1'].data[0, :36]

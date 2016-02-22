@@ -177,6 +177,8 @@ else:
     
     fd_gpt = open( "../plots/" + csv_filename + ".gpt" , "w" )
 
+    fd_gpt.write( 'set key outside\n' )
+#    fd_gpt.write( 'set xrange [0:%f]\n' % (iteration * 2) )
     if do_loss:
         fd_gpt.write( 'set title "Loss vs. Training Iteration (Log Scale)" font ",14"\n' )
         fd_gpt.write( 'set logscale y\n' )
