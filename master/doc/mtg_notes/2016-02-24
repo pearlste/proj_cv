@@ -1,0 +1,14 @@
+Met with Phil
+
+Phil's plans:
+
+    * Set up workspace
+    * Get familiar with it, try some runs, etc
+    * Review literature
+    * Maybe look into possibility of eliminating need to specify -N and -S in run_caffe.py
+    * Eventually may develop a script to automatically submit a sequence of jobs that only differ by the seed number, throttled by the load average. Maybe use batch?
+    * Do an investigation, maybe one of:
+        Convergence time PDFs, as a function of network parameters
+        JPEG quantization scale factor impact on accuracy and convergence time
+        How well does synthetic data translate into real data?
+        Synthetic images for vehicles
