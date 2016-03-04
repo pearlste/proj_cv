@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python
 
 # Usage: run_caffe.py -slvcfg_template <sct_filename> -slvcfg_defines <scd_filename>
 #                     -netcfg_template <nct_filename> -netcfg_defines <ncd_filename>
