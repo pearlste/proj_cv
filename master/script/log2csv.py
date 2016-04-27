@@ -6,14 +6,19 @@ import re
 import subprocess
 import numpy as np
 
+
 def Usage():
     print '''
 Usage: log2csv.py -h
        log2csv.py --help
        log2csv.py <csv_filename>
-       log2csv.py <pattern> [-l] <csv_filename>
+       log2csv.py <pattern> [-lb] <csv_filename>
            pattern = regular expression, default is ".*"
+           -l = loss (default is accuracy)
+           -b = bare (test data, lines only, no legend)
 
+       # Currently doesn't actually support -b option, but "bare" mode is now hard-coded
+       
        With no arguments all defaults are used.
        Pattern must be defined to use other arguments
        
@@ -177,7 +182,8 @@ else:
     
     fd_gpt = open( "../plots/" + csv_filename + ".gpt" , "w" )
 
-    fd_gpt.write( 'set key outside\n' )
+    fd_gpt.write( 'unset key\n' )
+#    fd_gpt.write( 'set key outside\n' )
 #    fd_gpt.write( 'set xrange [0:%f]\n' % (iteration * 2) )
     if do_loss:
         fd_gpt.write( 'set title "Loss vs. Training Iteration (Log Scale)" font ",14"\n' )
@@ -189,10 +195,11 @@ else:
     fd_gpt.write( "\n" )
     for idx in range(file_idx):
         if idx == 0:
-            fd_gpt.write( r'  plot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            fd_gpt.write( r'  plot "%s/plots/%s_test.csv" every ::1 using %d:%d with lines title "%s_tst" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            # fd_gpt.write( r'  plot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
         else:
-            fd_gpt.write( r'replot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
-        fd_gpt.write( r'replot "%s/plots/%s_test.csv" every ::1 using %d:%d with linespoints title "%s_tst" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            fd_gpt.write( r'replot "%s/plots/%s_test.csv" every ::1 using %d:%d with lines title "%s_tst" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
+            # fd_gpt.write( r'replot "%s/plots/%s_train.csv" every ::1 using %d:%d with points title "%s" lc %d%s' % (colombe_root, csv_filename, file_idx+1, idx+1, the_dir_arr[idx], idx, "\n" ) )
 
     fd_gpt.write( 'set terminal postscript noenhanced\n' )
     fd_gpt.write( 'set output "../plots/%s.ps"\n' % csv_filename )
