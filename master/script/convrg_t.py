@@ -130,5 +130,5 @@ else:
     for i in range(num_bins):
         print "%s " % the_histo[i],
     print "];"
-    plt.plot(the_histo)
+    plt.plot(the_histo[0:num_bins-2])
     pylab.show()
