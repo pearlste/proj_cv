@@ -49,7 +49,7 @@ HDREXTS = .h .H .hh .hpp .HPP .h++ .hxx .hp
 # Users can override those variables from the command line.
 # CFLAGS  = -g -O2
 # CXXFLAGS= -g -O2
-CFLAGS  = -g
+CFLAGS  = -O3
 CXXFLAGS= -g
 
 # The C program compiler.
