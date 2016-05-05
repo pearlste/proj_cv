@@ -43,88 +43,107 @@ else:
     file_list = os.listdir('.')
     file_list.sort()
     
-    file_idx        = 0
-    prev_line_cnt   = -1    
-
-    flt_re = r'([e\-0-9\.]+)'
-    test_flt_str    = "Test.*accuracy = %s" % flt_re
+    # Find iteration_delta based on the iteration listed for the 2nd entry
+    #   ... check to see that it is constant among all stats files examined
+    # Find num_bins based on the maximum iteration seen among all files
     
-    for the_dir in file_list:
-        m = re.search( pattern, the_dir )
-        
-        if m:
-            # Get line count of lines matching pattern
-            # Add to line_cnt
-            sys_cmd = 'grep -P "%s" %s/stdout_log | wc' % (test_flt_str, the_dir)
-#            print 'sys_cmd=%s' % sys_cmd
-            wc = subprocess.check_output( [sys_cmd], shell=True)
-            m = re.search( "^\s*([e\-0-9\.]+)\s", wc )
-
-            line_cnt = int(m.group(1))
-            if prev_line_cnt != -1:
-                if line_cnt != prev_line_cnt:
-                    print "Error: line_cnt=%d, prev_line_cnt=%d" % (line_cnt, prev_line_cnt)
-                    exit( 1 )
-            prev_line_cnt = line_cnt
-            
-            file_idx = file_idx + 1    
-#            print "%s: %d" % (the_dir, line_cnt)
-    
-    the_test_arr    = np.ndarray(shape=(line_cnt, file_idx), dtype="i4,f8", order='C')
-    the_dir_arr     = []
-    file_idx        = 0
-    num_bins        = line_cnt + 1
-    the_histo       = np.zeros(num_bins)
-    iteration       = 0
     iteration_delta = 0
+    num_bins        = 0
+    
+    files_processed = 0
     
     for the_dir in file_list:
         m = re.search( pattern, the_dir )
         
         if m:
-            the_dir_arr.append( the_dir )
-            fd_src = open( "%s/stdout_log" % the_dir, "r" )
+            # Get line 2            
+            sys_cmd = 'head -2 %s/tst_accu | tail -1' % the_dir
+            the_line = subprocess.check_output( [sys_cmd], shell=True)
+            m = re.search( "([0-9\.]+)\s+([0-9\.]+)", the_line )
+            new_iteration_delta = int(m.group(1))
             
-            test_row_idx  = 0
+            if iteration_delta != 0 and iteration_delta != new_iteration_delta:
+                print "Error: file %s/tst_accu, iteration_delta=%d, new_iteration_delta=%d" % (the_dir, iteration_delta, new_iteration_delta)
+                exit()
+            else:
+                iteration_delta = new_iteration_delta
+                
+            # Get last line
+            sys_cmd = 'tail -1 %s/tst_accu' % the_dir
+            the_line = subprocess.check_output( [sys_cmd], shell=True)
+            m = re.search( "([0-9\.]+)\s+([0-9\.]+)", the_line )
+            new_num_bins = int(m.group(1))
+            
+            if new_num_bins > num_bins:
+                num_bins = new_num_bins
+                print "Note: %s/tst_accu, new_num_bins=%3d" % (the_dir, new_num_bins)
+            
+            files_processed += 1
+            if (files_processed % 1000) == 0:
+                sys.stdout.write("%5d ...\n" % files_processed)
+                sys.stdout.flush()
+
+            break
+    print            
+
+    # At this point num_bins still represents the maximum number of iterations,
+    # not yet scaled by iteration_delta
+    best_conv_time  = num_bins
+
+    num_bins /= iteration_delta
+    print "Note: iteration_delta=%3d, num_bins=%3d" % (iteration_delta, num_bins)            
+
+    best_exp        = ""
+    the_histo       = np.zeros(num_bins)
+    files_processed = 0
+    
+    for the_dir in file_list:
+        m = re.search( pattern, the_dir )
+        
+        if m:
+            fd_src = open( "%s/tst_accu" % the_dir, "r" )
             
             rise_start = 0
             
             while ( 1 ):
                 x = fd_src.readline()
                 if x == "":
-#                    print "%s, inf: %f" % (the_dir, the_val)
-                    the_histo[num_bins - 1] += 1
+                    # We reached EOF without ever surpassing acc_thr1
+                    the_histo[num_bins-1] += 1
+                    # print "%40s: never" % the_dir
                     break
                 
-                m = re.search( "Iteration ([0-9]+), Testing", x )
+                m = re.search( "([0-9\.]+)\s+([0-9\.]+)", x )
                 if m:
-                    if iteration == 0:
-                        iteration_delta = float(m.group(1)) - iteration
-                    iteration = float(m.group(1))
-                    
-                m = re.search( test_flt_str, x )
-                if m:
-                    the_val = float(m.group(1))
-                    the_test_arr[test_row_idx][file_idx]['f0'] = iteration
-                    the_test_arr[test_row_idx][file_idx]['f1'] = the_val
+                    iteration   = int(m.group(1))
+                    the_val     = float(m.group(2))
                     
                     if the_val >= acc_thr2:
-#                        print "%s, %d: %f" % (the_dir, iteration, the_val)
                         if rise_start == 0:
-                            the_histo[0] += 1
-                        else:
-                            # print "iteration=%d, rise_start=%d" % (iteration, rise_start)
-                            the_histo[(iteration-rise_start)/iteration_delta] += 1
+                            # Crossing both thresholds on the same iteration, no time difference between them
+                            rise_start = iteration
+
+                        conv_time = iteration-rise_start
+                        if conv_time < best_conv_time:
+                            best_conv_time  = conv_time
+                            best_exp        = the_dir
+                        
+                        # Previously surpassed acc_thr1 at rise-start, add up-tick to histogram based on
+                        # iteration - rise_start
+                        the_histo[conv_time/iteration_delta] += 1
+ 
+                        # Once we've surpassed acc_thr2, nothing more to look at, so break
+                        # print "%40s: %7d" % (the_dir, iteration-rise_start)
                         break
+ 
                     elif rise_start == 0 and the_val >= acc_thr1:
                         rise_start = iteration
-                        
-                    test_row_idx = test_row_idx + 1
-#                    print "%d %d\n" % (iteration, test_row_idx)
-            
-            file_idx = file_idx + 1    
+                    
             fd_src.close()
-    
+            files_processed += 1
+                    
+    print "Out of %d experiments, best: %s, time=%d" % (files_processed, best_exp, best_conv_time)
+    print
     print "the_histo = [ ",
     len(the_histo)
     for i in range(num_bins):
