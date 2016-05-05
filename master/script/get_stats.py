@@ -58,10 +58,10 @@ else:
             
         except (OSError, IOError) as e:
             dir_exists = 0
-            print "Note: stats file %s/tst_loss does not exist ..." % the_dir
+            print "Note: stats file %s/tst_loss does not exist, creating tst_loss, tst_accu, trn_loss, trn_accu ..." % the_dir
 
         if dir_exists:
-            print "Note: stats file %s/tst_loss exists ..." % the_dir
+            # print "Note: stats file %s/tst_loss exists ..." % the_dir
             fd_flt_str_tst_loss.close()
 
         if dir_exists:
