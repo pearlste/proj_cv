@@ -41,41 +41,57 @@ plt.rcParams['image.cmap'] = 'gray'
 
 caffe.set_mode_cpu()
 
-for iteration in range (0,8000,80):
-    the_iter = iteration + 80
-    
-    net = caffe.Net(proj_root + '/exp/' + exp + '/train_val.prototxt',
-                    proj_root + '/exp/' + exp + '/snaps/snap__iter_%d.caffemodel'%the_iter,
-                    caffe.TEST)
-    
-    # input preprocessing: 'data' is the name of the input blob == net.inputs[0]
-#    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-#    transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
-#    
-#    [(k, v.data.shape) for k, v in net.blobs.items()]
-#    
-#    [(k, v[0].data.shape) for k, v in net.params.items()]
-    
-    i=0
-    
+NUM_TESTS       = 100
+ITERS_PER_TEST  = 80
+TOTAL_ITERS     = NUM_TESTS * ITERS_PER_TEST
+
+
+for i in range(0, 8):
     # the parameters are a list of [weights, biases]
     layer_num = i+1
     if layer_num < 6:
         layer_str = 'conv%d' % layer_num
     else:
         layer_str = 'fc%d' % layer_num
+            
+    print layer_str
+    
+    for iteration in range (0, TOTAL_ITERS, ITERS_PER_TEST):
         
-    filters = net.params[layer_str][0].data
-    
-    # print "Layer %s:  pre-squeeze filters.shape=%s" % (layer_str, str(filters.shape))
-    
-    filters = filters.squeeze()
-    
-    #print "Layer %s: post-squeeze filters.shape=%s" % (layer_str, str(filters.shape))
-    
-    print str(filters)
-    #scipy.io.savemat('%s/plots/%s.mat' % (proj_root, layer_str), mdict={layer_str: filters})
-    
-    del filters
-    del net
+        the_iter = iteration + ITERS_PER_TEST
+        the_idx  = iteration / ITERS_PER_TEST;
         
+        net = caffe.Net(proj_root + '/exp/' + exp + '/train_val.prototxt',
+                        proj_root + '/exp/' + exp + '/snaps/snap__iter_%d.caffemodel'%the_iter,
+                        caffe.TEST)
+        
+        # input preprocessing: 'data' is the name of the input blob == net.inputs[0]
+    #    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
+    #    transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
+    #    
+    #    [(k, v.data.shape) for k, v in net.blobs.items()]
+    #    
+    #    [(k, v[0].data.shape) for k, v in net.params.items()]
+        
+        filters = net.params[layer_str][0].data
+        
+        # print "Layer %s:  pre-squeeze filters.shape=%s" % (layer_str, str(filters.shape))
+        
+        filters = filters.squeeze()
+    
+        if the_idx == 0:
+            all_filters = np.zeros( (NUM_TESTS, ) + filters.shape)
+        
+        all_filters[the_idx, :] = filters
+            
+        # print "Layer %s: post-squeeze filters.shape=%s" % (layer_str, str(filters.shape))
+        
+        #print str(filters)
+        
+        del filters
+        del net
+            
+    scipy.io.savemat('%s/plots/%s_%s.mat' % (proj_root, exp, layer_str), mdict={'weights': all_filters})
+
+    del all_filters
+    
