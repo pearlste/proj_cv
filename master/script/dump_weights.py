@@ -15,6 +15,13 @@ import pylab
 def Usage():
     print '''
 Usage: dump_weights.py <expdir>
+
+  The results will be stored in a bunch of (e.g. 9) .mat files
+  in the 'plots' subdirectory.
+  
+  Use the MATLAB function 'plot_conv' to take these files, and
+  create an animated GIF, that can be viewed with 'imagej'.
+  
                 '''
     exit()
     
