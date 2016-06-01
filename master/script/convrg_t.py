@@ -52,6 +52,8 @@ else:
     
     files_processed = 0
     
+    print ""
+    
     for the_dir in file_list:
         m = re.search( pattern, the_dir )
         
@@ -76,7 +78,7 @@ else:
             
             if new_num_bins > num_bins:
                 num_bins = new_num_bins
-                print "Note: %s/tst_accu, new_num_bins=%3d" % (the_dir, new_num_bins)
+                print "Note: %s/tst_accu, new_num_bins=%3d\n" % (the_dir, new_num_bins)
             
             files_processed += 1
             if (files_processed % 1000) == 0:
@@ -84,17 +86,17 @@ else:
                 sys.stdout.flush()
 
             break
-    print            
 
     # At this point num_bins still represents the maximum number of iterations,
     # not yet scaled by iteration_delta
     best_conv_time  = num_bins
 
     num_bins /= iteration_delta
-    print "Note: iteration_delta=%3d, num_bins=%3d" % (iteration_delta, num_bins)            
+    print "Note: iteration_delta=%3d, num_bins=%3d\n" % (iteration_delta, num_bins)            
 
     best_exp        = ""
     the_histo       = np.zeros(num_bins)
+    convrg_t_arr    = []
     files_processed = 0
     
     for the_dir in file_list:
@@ -128,6 +130,7 @@ else:
                             best_conv_time  = conv_time
                             best_exp        = the_dir
                         
+                        convrg_t_arr = np.append(convrg_t_arr, [conv_time])
                         # Previously surpassed acc_thr1 at rise-start, add up-tick to histogram based on
                         # iteration - rise_start
                         the_histo[conv_time/iteration_delta] += 1
@@ -142,12 +145,16 @@ else:
             fd_src.close()
             files_processed += 1
                     
-    print "Out of %d experiments, best: %s, time=%d" % (files_processed, best_exp, best_conv_time)
-    print
-    print "the_histo = [ ",
-    len(the_histo)
-    for i in range(num_bins):
-        print "%s " % the_histo[i],
-    print "];"
-    plt.plot(the_histo[0:num_bins-2])
-    pylab.show()
+    print "Out of %d experiments, best: %s, time=%d\n" % (files_processed, best_exp, best_conv_time)
+
+    proj_root  = os.environ['COLOMBE_ROOT']
+    print "Saving files:"
+    print '   %s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_raw', acc_thr1, acc_thr2)
+    print '   %s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_hst', acc_thr1, acc_thr2)
+    print ''
+    
+    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_raw', acc_thr1, acc_thr2), mdict={'convrg_t_raw_0_%2d__0_%2d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): convrg_t_arr})
+    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_hst', acc_thr1, acc_thr2), mdict={'convrg_t_hst_0_%2d__0_%2d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): the_histo})
+    
+#    plt.plot(the_histo[0:num_bins-2])
+#    pylab.show()
