@@ -14,14 +14,13 @@ import pylab
 
 def Usage():
     print '''
-Usage: confusion_matrix.py <expdir>
+Usage: dump_weights.py <expdir>
                 '''
     exit()
     
 if (len(sys.argv) != 2):
     Usage()
     
-# Make sure that caffe is on the python path:
 caffe_root = os.environ['CAFFE_ROOT']
 proj_root  = os.environ['COLOMBE_ROOT']
 
