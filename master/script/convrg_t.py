@@ -153,8 +153,8 @@ else:
     print '   %s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_hst', acc_thr1, acc_thr2)
     print ''
     
-    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_raw', acc_thr1, acc_thr2), mdict={'convrg_t_raw_0_%2d__0_%2d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): convrg_t_arr})
-    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_hst', acc_thr1, acc_thr2), mdict={'convrg_t_hst_0_%2d__0_%2d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): the_histo})
+    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_raw', acc_thr1, acc_thr2), mdict={'convrg_t_raw_0_%02d__0_%02d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): convrg_t_arr})
+    scipy.io.savemat('%s/plots/%s_%s_%1.2f_%1.2f.mat' % (proj_root, outfile, 'convrg_t_hst', acc_thr1, acc_thr2), mdict={'convrg_t_hst_0_%02d__0_%02d' % (int(round(acc_thr1*100)), int(round(acc_thr2*100))): the_histo})
     
 #    plt.plot(the_histo[0:num_bins-2])
 #    pylab.show()
