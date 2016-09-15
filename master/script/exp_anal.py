@@ -37,6 +37,5 @@ for the_dir in file_list:
         else:
             num_exps += 1
 
-    else:
-        print "%5d exps\n" % (num_exps)
+print "%5d exps\n" % (num_exps)
 
