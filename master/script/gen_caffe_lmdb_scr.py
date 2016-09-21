@@ -42,8 +42,8 @@ else:
         n_frames = num_files / 2 
 
     for i in range(n_frames):
-        print "%s 1" % the_files[start_idx + i] 
+        print "%s/%s 1" % (jpg_path, the_files[start_idx + i]) 
 
     for i in range(n_frames):
-        print "%s 0" % the_files[start_idx + i + num_files/2] 
+        print "%s/%s 0" % (jpg_path, the_files[start_idx + i + num_files/2]) 
     
