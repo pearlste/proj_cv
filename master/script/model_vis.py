@@ -7,7 +7,7 @@ sys.path.insert(0, '/usr/local/lib/python2.7/site-packages/google/protobuf')
 #sys.path.insert(0, '/usr/lib64')
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
+#%matplotlib inline
 import os
 
 # Make sure that caffe is on the python path:
@@ -24,9 +24,11 @@ plt.rcParams['figure.figsize'] = (10, 10)
 plt.rcParams['image.interpolation'] = 'nearest'
 plt.rcParams['image.cmap'] = 'gray'
 
+expname = 'c1-8_c2-8_c3-8_c4-8_c5-8_fc6-8_fc7-64_seed1882'
+
 caffe.set_mode_cpu()
-net = caffe.Net(proj_root + '/cfg/train_val1.prototxt',
-                proj_root + 'exp/gray_8000/snaps/snap__iter_1600.caffemodel',
+net = caffe.Net(proj_root + '/exp/%s/train_val.prototxt'%expname,
+                proj_root + '/exp/%s/snaps/snap__iter_1600.caffemodel'%expname,
                 caffe.TEST)
 
 # input preprocessing: 'data' is the name of the input blob == net.inputs[0]
