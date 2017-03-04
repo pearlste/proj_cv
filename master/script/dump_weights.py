@@ -11,27 +11,24 @@ import scipy.io
 import matplotlib.pyplot as plt
 import os
 import pylab
+import argparse
 
-def Usage():
-    print '''
-Usage: dump_weights.py <expdir>
+parser = argparse.ArgumentParser()
+parser.add_argument('-iters_per_test', type=int, default=80 )
+parser.add_argument('-num_tests', type=int, default=100 )
+parser.add_argument('exp')
+args = parser.parse_args()
 
-  The results will be stored in a bunch of (e.g. 9) .mat files
-  in the 'plots' subdirectory.
-  
-  Use the MATLAB function 'plot_conv' to take these files, and
-  create an animated GIF, that can be viewed with 'imagej'.
-  
-                '''
-    exit()
-    
-if (len(sys.argv) != 2):
-    Usage()
-    
+#  The results will be stored in a bunch of (e.g. 9) .mat files
+#  in the 'plots' subdirectory.
+#  
+#  Use the MATLAB function 'plot_conv' to take these files, and
+#  create an animated GIF, that can be viewed with 'imagej'.
+
 caffe_root = os.environ['CAFFE_ROOT']
 proj_root  = os.environ['COLOMBE_ROOT']
 
-exp = sys.argv[1]
+exp = args.exp
 exppath = proj_root + "/exp/" + exp
 os.chdir(exppath)
 
@@ -47,8 +44,8 @@ plt.rcParams['image.cmap'] = 'gray'
 
 caffe.set_mode_cpu()
 
-NUM_TESTS       = 100
-ITERS_PER_TEST  = 80
+NUM_TESTS       = args.num_tests
+ITERS_PER_TEST  = args.iters_per_test
 TOTAL_ITERS     = NUM_TESTS * ITERS_PER_TEST
 
 
