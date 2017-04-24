@@ -171,7 +171,7 @@ else:
 #       net:                SX_TRAIN_VAL_FILENAME_WITH_PATH
 #       snapshot_prefix:    SX_SNAPSHOT_PREFIX
 
-    system_cmd = '$CAFFE_ROOT/build/tools/caffe train -log_dir %s --solver=%s/solver.prototxt >& stdout_log &' % (exppath, exppath)
+    system_cmd = '$CAFFE_ROOT/build/tools/caffe train -log_dir %s --solver=%s/solver.prototxt &> stdout_log &' % (exppath, exppath)
     print "system_cmd = %s\n" % system_cmd
     
     fd = open( "cmd", mode = 'w')
